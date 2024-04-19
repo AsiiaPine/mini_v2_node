@@ -24,7 +24,7 @@ if(USE_PLATFORM_UBUNTU)
     set(CAN_PLATFORM socketcan)
     set(APP_PLATFORM ubuntu)
 else()
-    set(stm32cubeMxProjectPath ${ROOT_DIR}/Libs/stm32-cube-project)
+    set(stm32cubeMxProjectPath ${PWD}/v3-software-template)
     FILE(GLOB ldFile ${stm32cubeMxProjectPath}/*_FLASH.ld)
     get_filename_component(FILE_NAME ${ldFile} NAME_WE)
 
