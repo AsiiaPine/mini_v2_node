@@ -13,9 +13,10 @@ extern "C" {
 enum class AdcChannel : uint8_t {
     ADC_VIN,
     ADC_5V,
+    ADC_IN4,
+    ADC_IN5,
     ADC_CURRENT,
     ADC_VERSION,
-    ADC_TEMPERATURE,
     ADC_NUMBER_OF_CNANNELS,
 };
 

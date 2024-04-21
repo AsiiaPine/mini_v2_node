@@ -18,9 +18,23 @@ public:
         return AdcPeriphery::init();
     }
 
+    static uint16_t force_1() {
+        uint16_t force = AdcPeriphery::get(AdcChannel::ADC_IN4);
+        return force;
+    }
+
+    static uint16_t force_2() {
+        uint16_t force = AdcPeriphery::get(AdcChannel::ADC_IN5);
+        return force;
+    }
+
     static uint16_t temperature() {
+        #ifdef ADC_TEMPERATURE
         uint16_t temp = AdcPeriphery::get(AdcChannel::ADC_TEMPERATURE);
         return stm32TemperatureParse(temp);
+        #else
+        return 0;
+        #endif
     }
 
     static float current() {

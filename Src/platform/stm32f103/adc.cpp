@@ -11,9 +11,19 @@ static uint32_t adc_current_avg = 0;
 static uint32_t adc_current_sum = 0;
 static uint32_t adc_dma_counter = 0;
 
+static uint32_t adc_force_avg_1 = 0;
+static uint32_t adc_force_sum_1 = 0;
+static uint32_t adc_force_dma_counter_1 = 0;
+
+
+static uint32_t adc_force_avg_2 = 0;
+static uint32_t adc_force_sum_2 = 0;
+static uint32_t adc_force_dma_counter_2 = 0;
+
 static inline uint16_t adc_dma_buffer[static_cast<uint8_t>(AdcChannel::ADC_NUMBER_OF_CNANNELS)];
 
 int8_t AdcPeriphery::init() {
+    if (_is_adc_already_inited) return 0;
     if (HAL_ADCEx_Calibration_Start(&hadc1) != HAL_OK) {
         return -1;
     }
@@ -34,6 +44,12 @@ uint16_t AdcPeriphery::get(AdcChannel channel) {
     if (channel == AdcChannel::ADC_CURRENT) {
         return adc_current_avg;
     }
+    // if (channel == AdcChannel::ADC_IN4) {
+    //     return adc_force_avg_1;
+    // }
+    // if (channel == AdcChannel::ADC_IN5) {
+    //     return adc_force_avg_2;
+    // }
     return adc_dma_buffer[static_cast<uint8_t>(channel)];
 }
 
@@ -50,6 +66,22 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
         adc_current_sum = 0;
 
         adc_dma_counter = 0;
+    }
+
+    adc_force_sum_1 += adc_dma_buffer[static_cast<uint8_t>(AdcChannel::ADC_IN4)];
+    if (adc_force_dma_counter_1 > 4000) {
+        adc_force_avg_1 = adc_force_sum_1 / adc_force_dma_counter_1;
+        adc_force_sum_1 = 0;
+
+        adc_force_dma_counter_1 = 0;
+    }
+
+    adc_force_sum_2 += adc_dma_buffer[static_cast<uint8_t>(AdcChannel::ADC_IN5)];
+    if (adc_force_dma_counter_2 > 4000) {
+        adc_force_avg_2 = adc_force_sum_2 / adc_force_dma_counter_2;
+        adc_force_sum_2 = 0;
+
+        adc_force_dma_counter_2 = 0;
     }
 
     HAL_ADC_Start_DMA(&hadc1,

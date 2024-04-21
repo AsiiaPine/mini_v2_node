@@ -13,3 +13,21 @@ system.name:
   enum: PARAM_SYSTEM_NAME
   flags: mutable
   default: "co.raccoonlab.mini"
+
+force.scaler_1:
+  type: Integer
+  note: Scaler for the first force sensor value in pct [%].
+  enum: PARAM_FORCE_SCALER_1
+  flags: mutable
+  default: 1
+  min: 1
+  max: 10000
+
+force.scaler_2:
+  type: Integer
+  note: Scaler for the second force sensor value in pct [%].
+  enum: PARAM_FORCE_SCALER_2
+  flags: mutable
+  default: 1
+  min: 1
+  max: 10000
