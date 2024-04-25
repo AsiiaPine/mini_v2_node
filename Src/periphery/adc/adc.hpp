@@ -6,17 +6,19 @@
 
 #include <stdint.h>
 #include "periphery/temperature_sensor/temperature_sensor.hpp"
+#include "logger.hpp"
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 enum class AdcChannel : uint8_t {
-    ADC_VIN,
-    ADC_5V,
     ADC_IN4,
     ADC_IN5,
+    ADC_VIN,
+    ADC_5V,
     ADC_CURRENT,
     ADC_VERSION,
+    ADC_TEMPERATURE,
     ADC_NUMBER_OF_CNANNELS,
 };
 

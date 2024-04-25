@@ -15,8 +15,8 @@
 
 void application_entry_point() {
     paramsInit((ParamIndex_t)IntParamsIndexes::INTEGER_PARAMS_AMOUNT, NUM_OF_STR_PARAMS, -1, 1);
-    paramsInitRedundantPage(255);
-    paramsChooseRom();
+    // paramsInitRedundantPage(255);
+    // paramsChooseRom();
     paramsLoad();
 
     auto node_id = paramsGetIntegerValue(IntParamsIndexes::PARAM_UAVCAN_NODE_ID);
@@ -30,15 +30,21 @@ void application_entry_point() {
 
     uavcanInitApplication(node_id);
 
-    ForceModule& status_module = ForceModule::get_instance();
+    ForceModule& force_module = ForceModule::get_instance();
     LedColor color = LedColor::BLUE_COLOR;
 
-    if (!status_module.instance_initialized) {
+    if (!force_module.instance_initialized) {
         color = LedColor::RED_COLOR;
     }
     while(true) {
         LedPeriphery::toggle(color);
-        status_module.spin_once();
+        force_module.spin_once();
+        if (force_module.status != ModuleStatus::MODULE_OK) {
+            color = LedColor::RED_COLOR;
+        } else {
+            color = LedColor::BLUE_COLOR;
+        }
+        uavcanSetNodeHealth((NodeStatusHealth_t)force_module.status);
         uavcanSpinOnce();
 
         WatchdogPeriphery::refresh();

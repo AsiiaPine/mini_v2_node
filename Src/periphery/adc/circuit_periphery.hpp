@@ -29,12 +29,8 @@ public:
     }
 
     static uint16_t temperature() {
-        #ifdef ADC_TEMPERATURE
         uint16_t temp = AdcPeriphery::get(AdcChannel::ADC_TEMPERATURE);
         return stm32TemperatureParse(temp);
-        #else
-        return 0;
-        #endif
     }
 
     static float current() {
@@ -53,6 +49,10 @@ public:
         constexpr float ADC_5V_MULTIPLIER = 1.0f / 640.0f;
         uint16_t volt = AdcPeriphery::get(AdcChannel::ADC_5V);
         return volt * ADC_5V_MULTIPLIER;
+    }
+
+    static uint16_t version() {
+        return AdcPeriphery::get(AdcChannel::ADC_VERSION);
     }
 };
 

@@ -31,3 +31,48 @@ force.scaler_2:
   default: 1
   min: 1
   max: 10000
+
+force.offset_1:
+  type: Integer
+  note: Offset for the second force sensor value.
+  enum: PARAM_FORCE_OFFSET_1
+  flags: mutable
+  default: 0
+  min: -1000
+  max: 10000
+
+force.offset_2:
+  type: Integer
+  note: Offset for the second force sensor value.
+  enum: PARAM_FORCE_OFFSET_2
+  flags: mutable
+  default: 0
+  min: -1000
+  max: 10000
+
+force.send_raw:
+  type: Integer
+  note: When set to 1 sends raw sensor data in info
+  enum: PARAM_FORCE_SEND_RAW
+  flags: mutable
+  default: 0
+  min: 0
+  max: 1
+
+force.mes_indx:
+  type: Integer
+  note: When set to 0, the ADC IN4 sensor is used as measurement, if 1 - right.
+  enum: PARAM_FORCE_MES_INDX
+  flags: mutable
+  default: 0
+  min: 0
+  max: 1
+
+force.coefficient:
+  type: Integer
+  note: Coefficient k, used to calculate force F=k*x in pct [%], so value 10 means k=0.1.
+  enum: PARAM_FORCE_COEFFICIENT
+  flags: mutable
+  default: 1
+  min: 0
+  max: 10000
