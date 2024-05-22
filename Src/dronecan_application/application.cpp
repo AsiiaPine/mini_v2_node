@@ -15,8 +15,8 @@
 
 void application_entry_point() {
     paramsInit((ParamIndex_t)IntParamsIndexes::INTEGER_PARAMS_AMOUNT, NUM_OF_STR_PARAMS, -1, 1);
-    // paramsInitRedundantPage(255);
-    // paramsChooseRom();
+    paramsInitRedundantPage(255);
+    paramsChooseRom();
     paramsLoad();
 
     auto node_id = paramsGetIntegerValue(IntParamsIndexes::PARAM_UAVCAN_NODE_ID);

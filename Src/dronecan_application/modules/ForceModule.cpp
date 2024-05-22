@@ -49,6 +49,7 @@ void ForceModule::update_params() {
 
 void ForceModule::spin_once() {
     static uint32_t next_pub_ms = 1000;
+    static uint32_t next_second_pub_ms = 1000;
     crnt_time_ms = HAL_GetTick();
     auto val_1 = CircuitPeriphery::force_1();
     auto val_2 = CircuitPeriphery::force_2();
@@ -62,6 +63,9 @@ void ForceModule::spin_once() {
 
         dronecan_equipment_actuator_status_publish(&force_status, &transfer_id);
         transfer_id++;
+        next_pub_ms = HAL_GetTick() + 20;
+    }
+    if (send_raw && (crnt_time_ms > next_second_pub_ms)) {
         force_status = {
             .actuator_id = 1,
             .position = (val_2 - offset_2)* force2_scaler,
@@ -69,7 +73,7 @@ void ForceModule::spin_once() {
             .power_rating_pct = (uint8_t)(100 * (val_2 / 4095.0f))};
         dronecan_equipment_actuator_status_publish(&force_status, &transfer_id);
         transfer_id++;
-        next_pub_ms = HAL_GetTick() + 10;
+        next_second_pub_ms = HAL_GetTick() + 20;
     }
     update_params();
 
@@ -77,6 +81,7 @@ void ForceModule::spin_once() {
         status = ModuleStatus::MODULE_ERROR;
         return;
     }
+
     static uint32_t real_force_pub_ms = 0;
     auto mes_force = val_1;
     auto ref_force = val_2;
