@@ -15,7 +15,7 @@
 
 int main() {
     std::cout << "The app has been started." << std::endl;
-    romInit(0, 1);
+    romInit(0, 2);
     application_entry_point();
     return 0;
 }

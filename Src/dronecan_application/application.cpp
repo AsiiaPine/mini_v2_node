@@ -12,10 +12,11 @@
 #include "periphery/iwdg/iwdg.hpp"
 #include "modules/pwm/PWMModule.hpp"
 #include "modules/circuit_status/CircuitStatusModule.hpp"
-
+#include "logger.hpp"
 
 __attribute__((noreturn)) void application_entry_point() {
-    paramsInit((ParamIndex_t)IntParamsIndexes::INTEGER_PARAMS_AMOUNT, NUM_OF_STR_PARAMS, -1, 1);
+    Logger logger = Logger("app");
+    paramsInit((ParamIndex_t)IntParamsIndexes::INTEGER_PARAMS_AMOUNT, NUM_OF_STR_PARAMS, -2, 2);
     paramsLoad();
 
     auto node_id = paramsGetIntegerValue(IntParamsIndexes::PARAM_UAVCAN_NODE_ID);
@@ -29,12 +30,10 @@ __attribute__((noreturn)) void application_entry_point() {
 
     uavcanInitApplication(node_id);
 
-
     CircuitStatus circuit_status;
     PWMModule pwm_module;
 
     std::array<Module*, 2> modules = { &circuit_status, &pwm_module };
-
     for (auto module : modules) {
         module->init();
     }
@@ -60,5 +59,9 @@ __attribute__((noreturn)) void application_entry_point() {
         uavcanSpinOnce();
 
         WatchdogPeriphery::refresh();
+
+        if (HAL_GetTick() % 1000 > 990) {
+            logger.log_info((const char*) paramsGetStringValue(node_name_param_idx+2));
+        }
     }
 }
