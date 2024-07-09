@@ -13,3 +13,391 @@ system.name:
   enum: PARAM_SYSTEM_NAME
   flags: mutable
   default: "co.raccoonlab.mini"
+
+
+
+uavcan.description:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION
+  flags: mutable
+  default: "456"
+
+uavcan.description_1:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_1
+  flags: mutable
+  default: "Controls 4 pwms"
+
+uavcan.description_2:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_2
+  flags: mutable
+  default: "Controls 4 pwms"
+
+uavcan.description_3:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_3
+  flags: mutable
+  default: "456"
+
+uavcan.description_4:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_4
+  flags: mutable
+  default: "Controls 4 pwms"
+
+uavcan.description_5:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_5
+  flags: mutable
+  default: "Controls 4 pwms"
+
+uavcan.description_6:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_6
+  flags: mutable
+  default: "456"
+
+uavcan.description_7:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_7
+  flags: mutable
+  default: "Controls 4 pwms"
+
+uavcan.description_8:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_8
+  flags: mutable
+  default: "Controls 4 pwms"
+
+
+uavcan.description_9:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_9
+  flags: mutable
+  default: "456"
+
+uavcan.description_10:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_10
+  flags: mutable
+  default: "Controls 4 pwms"
+
+uavcan.description_11:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_11
+  flags: mutable
+  default: "Controls 4 pwms"
+
+uavcan.description_12:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_12
+  flags: mutable
+  default: "456"
+
+uavcan.description_13:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_13
+  flags: mutable
+  default: "Controls 4 pwms"
+
+uavcan.description_14:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_14
+  flags: mutable
+  default: "Controls 4 pwms"
+
+
+uavcan.description_15:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_15
+  flags: mutable
+  default: "456"
+
+uavcan.description_16:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_16
+  flags: mutable
+  default: "Controls 4 pwms"
+
+uavcan.description_17:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_17
+  flags: mutable
+  default: "Controls 4 pwms"
+
+uavcan.description_18:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_18
+  flags: mutable
+  default: "456"
+
+uavcan.description_19:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_19
+  flags: mutable
+  default: "Controls 4 pwms"
+
+uavcan.description_20:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_20
+  flags: mutable
+  default: "Controls 4 pwms"
+
+
+uavcan.description_21:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_21
+  flags: mutable
+  default: "456"
+
+uavcan.description_22:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_22
+  flags: mutable
+  default: "Controls 4 pwms"
+
+uavcan.description_23:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_23
+  flags: mutable
+  default: "Controls 4 pwms"
+
+uavcan.description_24:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_24
+  flags: mutable
+  default: "456"
+
+uavcan.description_25:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_25
+  flags: mutable
+  default: "Controls 4 pwms"
+
+uavcan.description_26:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_26
+  flags: mutable
+  default: "Controls 4 pwms"
+
+
+
+uavcan.description_27:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_27
+  flags: mutable
+  default: "456"
+
+uavcan.description_28:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_28
+  flags: mutable
+  default: "Controls 4 pwms"
+
+uavcan.description_29:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_29
+  flags: mutable
+  default: "Controls 4 pwms"
+
+uavcan.description_30:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_30
+  flags: mutable
+  default: "456"
+
+uavcan.description_31:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_31
+  flags: mutable
+  default: "Controls 4 pwms"
+
+uavcan.description_32:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_32
+  flags: mutable
+  default: "Controls 4 pwms"
+
+uavcan.description_33:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_33
+  flags: mutable
+  default: "456"
+
+uavcan.description_34:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_34
+  flags: mutable
+  default: "Controls 4 pwms"
+
+uavcan.description_35:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_35
+  flags: mutable
+  default: "Controls 4 pwms"
+
+
+uavcan.description_36:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_36
+  flags: mutable
+  default: "456"
+
+uavcan.description_37:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_37
+  flags: mutable
+  default: "Controls 4 pwms"
+
+uavcan.description_38:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_38
+  flags: mutable
+  default: "Controls 4 pwms"
+
+uavcan.description_39:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_39
+  flags: mutable
+  default: "456"
+
+uavcan.description_40:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_40
+  flags: mutable
+  default: "Controls 4 pwms"
+
+uavcan.description_41:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_41
+  flags: mutable
+  default: "Controls 4 pwms"
+
+
+uavcan.description_42:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_42
+  flags: mutable
+  default: "456"
+
+uavcan.description_43:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_43
+  flags: mutable
+  default: "Controls 4 pwms"
+
+uavcan.description_44:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_44
+  flags: mutable
+  default: "Controls 4 pwms"
+
+uavcan.description_45:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_45
+  flags: mutable
+  default: "456"
+
+uavcan.description_46:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_46
+  flags: mutable
+  default: "Controls 4 pwms"
+
+uavcan.description_47:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_47
+  flags: mutable
+  default: "Controls 4 pwms"
+
+
+uavcan.description_48:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_48
+  flags: mutable
+  default: "456"
+
+uavcan.description_49:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_49
+  flags: mutable
+  default: "Controls 4 pwms"
+
+uavcan.description_50:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_50
+  flags: mutable
+  default: "Controls 4 pwms"
+
+uavcan.description_51:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_51
+  flags: mutable
+  default: "456"
+
+uavcan.description_52:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_52
+  flags: mutable
+  default: "Controls 4 pwms"
+
+uavcan.description_53:
+  type: String
+  note: Defines custom node description. If empty, the node will use the default description.
+  enum: PARAM_UAVCAN_DESCRIPTION_53
+  flags: mutable
+  default: "Controls 4 pwms"
