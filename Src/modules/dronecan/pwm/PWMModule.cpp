@@ -32,7 +32,6 @@ uint16_t PWMModule::ttl_cmd = 500;
 uint16_t PWMModule::pwm_freq = 50;
 CommandType PWMModule::pwm_cmd_type = CommandType::RAW_COMMAND;
 
-REGISTER_MODULE(PWMModule)
 
 std::array<PwmChannelInfo, static_cast<uint8_t>(HAL::PwmPin::PWM_AMOUNT)> PWMModule::params = {{
     {{.min = MIN(1), .max = MAX(1), .def = DEF(1), .ch = CH(1), .fb = FB(1)}, HAL::PwmPin::PWM_1},
@@ -40,6 +39,8 @@ std::array<PwmChannelInfo, static_cast<uint8_t>(HAL::PwmPin::PWM_AMOUNT)> PWMMod
     {{.min = MIN(3), .max = MAX(3), .def = DEF(3), .ch = CH(3), .fb = FB(3)}, HAL::PwmPin::PWM_3},
     {{.min = MIN(4), .max = MAX(4), .def = DEF(4), .ch = CH(4), .fb = FB(4)}, HAL::PwmPin::PWM_4},
 }};
+
+REGISTER_MODULE(PWMModule)
 
 void PWMModule::init() {
     mode = Module::Mode::INITIALIZATION;
@@ -63,13 +64,13 @@ void PWMModule::spin_once() {
     for (auto& pwm : params) {
         if (crnt_time_ms > pwm.cmd_end_time_ms) {
             pwm.command_val = pwm.def;
+            pwm.is_engaged = false;
         }
         HAL::Pwm::set_duration(pwm.pin, pwm.command_val);
-        if (pwm.command_val != pwm.def) {
-            mode = Module::Mode::ENGAGED;
+        if (pwm.is_engaged) {
+            mode = Mode::ENGAGED;
         }
     }
-
     status_pub_timeout_ms = 1;
     static uint32_t next_pub_ms = 5000;
 
@@ -234,10 +235,14 @@ void PWMModule::raw_command_cb(const RawCommand_t& msg) {
     }
 
     for (auto& pwm : params) {
-        if (pwm.channel >= msg.size) {
+        if (pwm.channel >= msg.size || pwm.channel < 0) {
             continue;
         }
-
+        if (msg.raw_cmd[pwm.channel] > -1) {
+            pwm.is_engaged = true;
+        } else {
+            pwm.is_engaged = false;
+        }
         pwm.cmd_end_time_ms = HAL_GetTick() + ttl_cmd;
         pwm.command_val = mapInt16CommandToPwm(msg.raw_cmd[pwm.channel], pwm.min, pwm.max, pwm.def);
     }
@@ -262,6 +267,7 @@ void PWMModule::array_command_callback(CanardRxTransfer* transfer) {
             if (command.commads[j].actuator_id != pwm->channel) {
                 continue;
             }
+            pwm->is_engaged = true;
             pwm->cmd_end_time_ms = HAL_GetTick() + ttl_cmd;
             pwm->command_val = mapFloatCommandToPwm(command.commads[j].command_value,
                                                     pwm->min, pwm->max, pwm->def);
@@ -283,9 +289,15 @@ void PWMModule::hardpoint_callback(CanardRxTransfer* transfer) {
         if (cmd.hardpoint_id != pwm.channel) {
             continue;
         }
-
+        pwm.is_engaged = true;
         // TTL has no effect on Hardpoint
         pwm.cmd_end_time_ms = std::numeric_limits<decltype(pwm.cmd_end_time_ms)>::max();
         pwm.command_val = (cmd.command == CMD_HOLD_OR_MAX) ? pwm.max : pwm.min;
+    }
+}
+
+void PWMModule::arming_status_callback(const ArmingStatus& msg) {
+    if (msg == ArmingStatus::STATUS_FULLY_ARMED) {
+        // params[0].is_engaged = true;
     }
 }
