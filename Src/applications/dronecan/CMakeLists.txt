@@ -14,4 +14,5 @@ include(${SRC_DIR}/modules/dronecan/pwm/CMakeLists.txt)
 
 if(USE_PLATFORM_NODE_V3)
     include(${SRC_DIR}/modules/imu/CMakeLists.txt)
+    include(${SRC_DIR}/modules/dronecan/canopen/CMakeLists.txt)
 endif()
