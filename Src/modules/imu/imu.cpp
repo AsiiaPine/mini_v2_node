@@ -6,6 +6,7 @@
 
 #include "imu.hpp"
 #include "params.hpp"
+#include "peripheral/spi/spi.hpp"
 
 REGISTER_MODULE(ImuModule)
 
@@ -55,10 +56,11 @@ void ImuModule::spin_once() {
         pub.publish();
     }
     static uint32_t prev_time;
+    imu.get_tr();
     char buffer[90];
-    if (prev_time < HAL_GetTick() + 500) {
+    if (prev_time < HAL_GetTick() + 1000) {
         prev_time = HAL_GetTick();
-        snprintf(buffer, sizeof(buffer), "%d", status);
+        snprintf(buffer, sizeof(buffer), "%lu", (imu.transaction_ctnr));
         logger.log_debug(buffer);
     }
 }

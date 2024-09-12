@@ -34,6 +34,8 @@ public:
      * @return 0 on success, negative otherwise
      */
     int8_t read_magnetometer(std::array<int16_t, 3>* mag) const;
+    void get_tr();
+    uint32_t transaction_ctnr = 0;
 private:
     bool initialized{false};
 };

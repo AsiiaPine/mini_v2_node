@@ -10,7 +10,10 @@
 #include <cstdint>
 #include <cstddef>
 
+
 namespace HAL {
+
+uint32_t get_transaction_cntr();
 
 class SPI {
 public:

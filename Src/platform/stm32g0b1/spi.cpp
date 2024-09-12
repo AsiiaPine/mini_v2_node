@@ -16,13 +16,18 @@ extern SPI_HandleTypeDef hspi2;
 SPI_HandleTypeDef* hspi_n = &hspi2;
 
 volatile uint8_t TXfinished = 0;
-
-void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi) {
+static uint32_t transactions_ctr = 0;
+void SPI_DMATransmitReceiveCplt(SPI_HandleTypeDef *hspi) {
+    transactions_ctr++;
     (void)hspi;
     TXfinished = 1;
 }
 
 namespace HAL {
+
+uint32_t get_transaction_cntr() {
+    return transactions_ctr;
+}
 
 static void spi_set_nss(bool nss_state) {
 #ifdef SPI2_NSS_GPIO_Port
@@ -47,6 +52,8 @@ int8_t SPI::read_register(std::byte reg_address, std::byte* reg_value) {
     }
 
     auto tx_byte = reg_address | SPI_READ;
+    // return HAL::SPI::dma_receive(&tx_byte, &reg_value[-1], 2);
+
     return HAL::SPI::transaction(&tx_byte, &reg_value[-1], 2);
 }
 
@@ -76,15 +83,17 @@ int8_t SPI::transaction(std::byte* tx, std::byte* rx, uint8_t size) {
 }
 
 int8_t SPI::dma_receive(std::byte* tx, std::byte* rx, uint8_t size) {
-    if (!TXfinished) {
+    if (TXfinished == 0) {
         return 0;
     }
-    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
+    transactions_ctr++;
+
+    // HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
     HAL_SPI_Receive_DMA(hspi_n, reinterpret_cast<uint8_t*>(rx), size);
     auto status = HAL_SPI_Transmit(hspi_n, reinterpret_cast<uint8_t*>(tx), 1, 100);
     TXfinished = 0;
     /*Wait until the data is transmitted*/
-    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
+    // HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
     return status;
 }
 

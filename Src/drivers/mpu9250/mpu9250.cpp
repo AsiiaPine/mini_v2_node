@@ -30,6 +30,10 @@ bool Mpu9250::initialize() {
     return initialized;
 }
 
+void Mpu9250::get_tr() {
+    transaction_ctnr = HAL::get_transaction_cntr();
+}
+
 int8_t Mpu9250::read_accelerometer(std::array<int16_t, 3>* accel) const {
     std::array<std::byte, 6> buffer;
     auto reg = std::byte(Mpu9250Resgiter::ACCEL_XOUT_H);
