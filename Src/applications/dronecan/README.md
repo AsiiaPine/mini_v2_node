@@ -34,3 +34,4 @@ The node has the following registers:
 |  30 | imu.enable              | Enable or disable IMU publisher. |
 
 > This docs was automatically generated. Do not edit it manually.
+

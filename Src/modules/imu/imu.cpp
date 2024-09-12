@@ -33,9 +33,9 @@ void ImuModule::spin_once() {
     }
 
     bool updated{false};
-
     std::array<int16_t, 3> accel_raw;
-    if (imu.read_accelerometer(&accel_raw) >= 0) {
+    auto status = imu.read_accelerometer(&accel_raw);
+    if (status >= 0) {
         pub.msg.accelerometer_latest[0] = raw_accel_to_meter_per_square_second(accel_raw[0]);
         pub.msg.accelerometer_latest[1] = raw_accel_to_meter_per_square_second(accel_raw[1]);
         pub.msg.accelerometer_latest[2] = raw_accel_to_meter_per_square_second(accel_raw[2]);
@@ -53,5 +53,12 @@ void ImuModule::spin_once() {
     if (updated) {
         pub.msg.timestamp = HAL_GetTick() * 1000;
         pub.publish();
+    }
+    static uint32_t prev_time;
+    char buffer[90];
+    if (prev_time < HAL_GetTick() + 500) {
+        prev_time = HAL_GetTick();
+        snprintf(buffer, sizeof(buffer), "%d", status);
+        logger.log_debug(buffer);
     }
 }

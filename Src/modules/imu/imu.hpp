@@ -11,6 +11,7 @@
 #include "module.hpp"
 #include "publisher.hpp"
 #include "drivers/mpu9250/mpu9250.hpp"
+#include "logger.hpp"
 
 #ifdef __cplusplus
 extern "C" {
@@ -18,7 +19,7 @@ extern "C" {
 
 class ImuModule : public Module {
 public:
-    ImuModule() : Module(10.0) {}
+    ImuModule() : Module(10.0, Protocol::DRONECAN) {}
     void init() override;
 
 protected:
@@ -31,6 +32,8 @@ private:
     Mpu9250 imu;
     bool initialized{false};
     bool enabled{false};
+
+    Logger logger = Logger("IMU");
 
     static constexpr float raw_gyro_to_rad_per_second(int16_t raw_gyro) {
         return raw_gyro * std::numbers::pi_v<float> / 131.0f / 180.0f;

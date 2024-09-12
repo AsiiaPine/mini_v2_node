@@ -40,6 +40,9 @@ public:
      * @return 0 on success, negative error otherwise
      */
     static int8_t transaction(std::byte* tx, std::byte* rx, uint8_t size);
+    static int8_t dma_receive(std::byte* tx, std::byte* rx, uint8_t size);
+    static void reset_finished();
+    static uint8_t finished_receive();
 };
 
 }  // namespace HAL
