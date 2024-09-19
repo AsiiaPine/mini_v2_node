@@ -18,7 +18,7 @@ int8_t SPI::read_registers(std::byte reg_address, std::byte* reg_values, uint8_t
 
 int8_t SPI::read_register(std::byte reg_address, std::byte* reg_value) {
     (void)reg_address;
-    *reg_value = 0x00;
+    memset(reg_value, 0x00, 1);
     return -1;
 }
 

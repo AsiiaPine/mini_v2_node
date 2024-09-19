@@ -1,6 +1,8 @@
 # Copyright (C) 2023-2024 Dmitry Ponomarev <ponomarevda96@gmail.com>
 # Distributed under the terms of the GPL v3 license, available in the file LICENSE.
 cmake_minimum_required(VERSION 3.15.3)
+# set(CMAKE_C_FLAGS_DEBUG "-g -DDEBUG")
+# set(CMAKE_CXX_FLAGS_DEBUG "-g -DDEBUG")
 
 # Pathes
 set(ROOT_DIR ${CMAKE_CURRENT_LIST_DIR})
@@ -54,8 +56,12 @@ include(${APPLICATION_DIR}/CMakeLists.txt)
 
 # Set compile options
 set(WARNING_FLAGS "-Wall -Wextra -Wfloat-equal -Werror -Wundef -Wshadow -Wpointer-arith -Wunreachable-code -Wstrict-overflow=5 -Wwrite-strings -Wswitch-default")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${WARNING_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WARNING_FLAGS} -Wno-volatile")
+set(CMAKE_C_FLAGS "${CFLAGS} ${CMAKE_C_FLAGS} ${WARNING_FLAGS}")
+# set(CMAKE_C_FLAGS "-g ${CMAKE_C_FLAGS} ${WARNING_FLAGS}")
+set(CMAKE_CXX_FLAGS "-g ${CMAKE_CXX_FLAGS} ${WARNING_FLAGS} -Wno-volatile")
+
+# set(CMAKE_CXX_FLAGS_DEBUG  "-g")
+# set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_STANDARD 20)
 
 # Prebuild
@@ -69,6 +75,7 @@ add_definitions(-DHW_VERSION_MINOR=1)
 # Project
 project(example CXX C ASM)
 
+message(STATUS "CMAKE_BUILD_TYPE is ${CMAKE_BUILD_TYPE}")
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()

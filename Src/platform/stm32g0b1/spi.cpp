@@ -13,21 +13,13 @@ static constexpr uint32_t TRANSMIT_DELAY = 10;
 static constexpr std::byte SPI_READ{0x80};
 
 extern SPI_HandleTypeDef hspi2;
-SPI_HandleTypeDef* hspi_n = &hspi2;
+SPI_HandleTypeDef* hspi = &hspi2;
+extern DMA_HandleTypeDef hdma_spi2_rx;
+extern DMA_HandleTypeDef hdma_spi2_tx;
 
-volatile uint8_t TXfinished = 0;
-static uint32_t transactions_ctr = 0;
-void SPI_DMATransmitReceiveCplt(SPI_HandleTypeDef *hspi) {
-    transactions_ctr++;
-    (void)hspi;
-    TXfinished = 1;
-}
-
-namespace HAL {
-
-uint32_t get_transaction_cntr() {
-    return transactions_ctr;
-}
+volatile uint8_t TXfinished = 1;
+volatile uint8_t RXfinished = 1;
+static uint64_t transactions_ctr = 0;
 
 static void spi_set_nss(bool nss_state) {
 #ifdef SPI2_NSS_GPIO_Port
@@ -35,6 +27,66 @@ static void spi_set_nss(bool nss_state) {
     HAL_GPIO_WritePin(SPI2_NSS_GPIO_Port, SPI2_NSS_Pin, state);
 #endif
 }
+
+// void SPI_DMATransmitCallback(DMA_HandleTypeDef *_hdma) {
+//     transactions_ctr++;
+//     (void)_hdma;
+//     TXfinished = 1;
+// }
+
+// void SPI_DMAReceiveCallback(DMA_HandleTypeDef *_hdma) {
+//     transactions_ctr++;
+//     (void)_hdma;
+//     RXfinished = 1;
+//     HAL::SPI::callback_function();
+// }
+// __HAL_SPI_ENABLE_IT(&hspi2, (SPI_IT_TXE | SPI_IT_ERR));
+
+void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *_hspi) {
+    // if(hspi->Instance == SPI2) {
+    (void)_hspi;
+    TXfinished = 1;
+}
+
+void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *_hspi) {
+    // if(hspi->Instance == SPI2) {
+    (void)_hspi;
+    transactions_ctr++;
+    RXfinished = 1;
+}
+// void HAL_SPI_TxHalfCpltCallback(SPI_HandleTypeDef *_hspi) {
+//     // if(hspi->Instance == SPI2) {
+//     (void)_hspi;
+//     transactions_ctr++;
+//     TXfinished = 1;
+//     // RXfinished = 1;
+// }
+
+void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *_hspi) {
+    transactions_ctr++;
+    (void)_hspi;
+    spi_set_nss(true);
+    // HAL::SPI::callback_function();
+    // TXfinished = 1;
+}
+
+// void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *_hspi) {
+//     (void)_hspi;
+//     HAL_SPI_FlushRxFifo(_hspi);
+//     transactions_ctr = 0;
+// }
+
+namespace HAL {
+void SPI::setup_callback() {
+    // HAL_DMA_RegisterCallback(&hdma_spi2_tx, HAL_DMA_XFER_CPLT_CB_ID, &SPI_DMATransmitCallback);
+    // HAL_DMA_RegisterCallback(&hdma_spi2_rx, HAL_DMA_XFER_CPLT_CB_ID, &SPI_DMAReceiveCallback);
+    // HAL_SPI_RegisterCallback(&hspi2, HAL_SPI_TX_COMPLETE_CB_ID, HAL_SPI_TxCpltCallback);
+    // HAL_SPI_RegisterCallback(&hspi2, HAL_SPI_TX_RX_COMPLETE_CB_ID, HAL_SPI_TxRxCpltCallback);
+}
+int get_transaction_cntr() {
+    return transactions_ctr;
+}
+void (*SPI::callback_function)() = nullptr;
 
 int8_t SPI::read_registers(std::byte reg_address, std::byte* reg_values, uint8_t size) {
     if (reg_values == nullptr) {
@@ -71,10 +123,11 @@ int8_t SPI::transaction(std::byte* tx, std::byte* rx, uint8_t size) {
 
     spi_set_nss(false);
     memset(rx, 0x00, size);
-    auto status = HAL_SPI_TransmitReceive(hspi_n,
+    auto status = HAL_SPI_TransmitReceive(hspi,
                                           reinterpret_cast<uint8_t*>(tx),
                                           reinterpret_cast<uint8_t*>(rx),
-                                          size,
+                                          size
+                                          ,
                                           TRANSMIT_DELAY
     );
     spi_set_nss(true);
@@ -83,18 +136,44 @@ int8_t SPI::transaction(std::byte* tx, std::byte* rx, uint8_t size) {
 }
 
 int8_t SPI::dma_receive(std::byte* tx, std::byte* rx, uint8_t size) {
-    if (TXfinished == 0) {
-        return 0;
+    if (tx == nullptr || rx == nullptr) {
+        return -1;
     }
-    transactions_ctr++;
+    // spi_set_nss(false);
+    if (hspi->ErrorCode != HAL_SPI_ERROR_NONE) {
+        return -1;
+    }
+    if (hspi->State != HAL_SPI_STATE_READY) {
+        return -1;
+    }
+    // auto status = HAL_SPI_TransmitReceive_DMA(hspi, reinterpret_cast<uint8_t*>(tx),
+    //                                     reinterpret_cast<uint8_t*>(rx), (uint16_t)size);
+    // return (status == HAL_OK) ? 0 : -status;
+    int8_t status = 0;
+    if (hspi->State < HAL_SPI_STATE_BUSY_TX) {
+    // if (TXfinished) {
+        // spi_set_nss(false);
+        status = HAL_SPI_Transmit_DMA(hspi, reinterpret_cast<uint8_t*>(tx), (uint16_t)size);
+        TXfinished = status? 0: 1;
+    }
+    if (hspi->State < HAL_SPI_STATE_BUSY_RX) {
+    // if (RXfinished) {
+        status = HAL_SPI_Receive_DMA(hspi, reinterpret_cast<uint8_t*>(rx), (uint16_t)size);
+        RXfinished = status? 0: 1;
+        // spi_set_nss(true);
+    }
+    return (status == HAL_OK) ? 0 : -status;
+    // if (hspi->State == HAL_SPI_STATE_ERROR) {
+    //     HAL_SPI_FlushRxFifo(hspi);
+    //     // &hspi->State = HAL_SPI_STATE_BUSY_TX;
+    //     return 0;
+    // }
 
-    // HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
-    HAL_SPI_Receive_DMA(hspi_n, reinterpret_cast<uint8_t*>(rx), size);
-    auto status = HAL_SPI_Transmit(hspi_n, reinterpret_cast<uint8_t*>(tx), 1, 100);
-    TXfinished = 0;
-    /*Wait until the data is transmitted*/
-    // HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
-    return status;
+    // return status;
+    // auto status = HAL_SPI_TransmitReceive_DMA(hspi,
+    //                                       reinterpret_cast<uint8_t*>(tx),
+    //                                       reinterpret_cast<uint8_t*>(rx),
+    //                                       size);
 }
 
 }  // namespace HAL

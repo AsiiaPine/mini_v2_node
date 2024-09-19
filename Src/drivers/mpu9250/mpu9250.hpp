@@ -23,19 +23,30 @@ public:
     /**
      * @return 0 on success, negative otherwise
      */
+
     int8_t read_accelerometer(std::array<int16_t, 3>* accel) const;
+    // static int8_t read_accelerometer(std::array<int16_t, 3>* accel);
 
     /**
      * @return 0 on success, negative otherwise
      */
-    int8_t read_gyroscope(std::array<int16_t, 3>* gyro) const;
+    int8_t read_gyroscope(std::array<int16_t, 3>* accel) const;
+    // static int8_t read_gyroscope(std::array<int16_t, 3>* gyro);
 
     /**
      * @return 0 on success, negative otherwise
      */
     int8_t read_magnetometer(std::array<int16_t, 3>* mag) const;
+
+    /**
+     * @brief This function is called by SPI::set_callback
+     */
+    void real_accel_and_gyro(std::array<int16_t, 3>* accel, std::array<int16_t, 3>* gyro) const;
+    // static void real_accel_and_gyro(std::array<int16_t, 3>* accel, std::array<int16_t, 3>* gyro);
     void get_tr();
-    uint32_t transaction_ctnr = 0;
+    uint64_t transaction_ctnr = 0;
+    static std::array<int16_t, 3>*  acceleration;
+    static std::array<int16_t, 3>* gyroscope;
 private:
     bool initialized{false};
 };

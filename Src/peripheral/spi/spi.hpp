@@ -9,11 +9,11 @@
 
 #include <cstdint>
 #include <cstddef>
-
+#include <utility>
 
 namespace HAL {
 
-uint32_t get_transaction_cntr();
+int get_transaction_cntr();
 
 class SPI {
 public:
@@ -46,6 +46,14 @@ public:
     static int8_t dma_receive(std::byte* tx, std::byte* rx, uint8_t size);
     static void reset_finished();
     static uint8_t finished_receive();
+    static void (*callback_function)();
+    // undefined reference to `HAL::SPI::callback_function'
+
+    template <typename T>
+    static void set_callback(T&& callback) {
+        callback_function = std::forward<T>(callback);
+    }
+    static void setup_callback();
 };
 
 }  // namespace HAL
