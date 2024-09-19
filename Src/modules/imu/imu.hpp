@@ -19,7 +19,7 @@ extern "C" {
 
 class ImuModule : public Module {
 public:
-    ImuModule() : Module(10.0, Protocol::DRONECAN) {}
+    ImuModule() : Module(2000.0, Protocol::DRONECAN) {}
     void init() override;
 
 protected:

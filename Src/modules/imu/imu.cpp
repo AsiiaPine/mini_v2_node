@@ -64,13 +64,13 @@ void ImuModule::spin_once() {
         pub.msg.accelerometer_latest[2] = raw_accel_to_meter_per_square_second(accel_raw[2]);
         updated = true;
     }
-    if (updated) {
-        pub.msg.timestamp = HAL_GetTick() * 1000;
-        pub.publish();
-    }
     static uint32_t prev_time;
-    char buffer[90];
-    if (prev_time + 1000 < HAL_GetTick()) {
+    if (prev_time + 100 < HAL_GetTick()) {
+        char buffer[90];
+        if (updated) {
+            pub.msg.timestamp = HAL_GetTick() * 1000;
+            pub.publish();
+        }
         imu.get_tr();
         prev_time = HAL_GetTick();
         snprintf(buffer, sizeof(buffer), "%lu", (uint32_t)(imu.transaction_ctnr));

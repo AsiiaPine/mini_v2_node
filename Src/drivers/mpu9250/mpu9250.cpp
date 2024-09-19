@@ -70,16 +70,16 @@ int8_t Mpu9250::read_gyroscope(std::array<int16_t, 3>* gyro) const {
     return 0;
 }
 
-void Mpu9250::real_accel_and_gyro(std::array<int16_t, 3>* accel, std::array<int16_t, 3>* gyro)
-const {
-    static bool is_accel_waiting = true;
-    if (is_accel_waiting) {
-        read_gyroscope(gyro);
-        is_accel_waiting = false;
-    } else {
-        read_accelerometer(accel);
-        is_accel_waiting = true;
-    }
+void Mpu9250::real_accel_and_gyro() {
+// void Mpu9250::real_accel_and_gyro(std::array<int16_t, 3>* accel, std::array<int16_t, 3>* gyro) {
+    // static bool is_accel_waiting = true;
+    // if (is_accel_waiting) {
+    //     read_gyroscope(gyroscope);
+    //     is_accel_waiting = false;
+    // } else {
+    //     read_accelerometer(acceleration);
+    //     is_accel_waiting = true;
+    // }
     // static uint32_t last_tick = 0;
     // if (HAL_GetTick() < last_tick + 100) {
     //     return;

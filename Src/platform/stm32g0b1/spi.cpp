@@ -29,7 +29,7 @@ static void spi_set_nss(bool nss_state) {
 }
 
 // void SPI_DMATransmitCallback(DMA_HandleTypeDef *_hdma) {
-//     transactions_ctr++;
+//     // transactions_ctr++;
 //     (void)_hdma;
 //     TXfinished = 1;
 // }
@@ -45,14 +45,18 @@ static void spi_set_nss(bool nss_state) {
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *_hspi) {
     // if(hspi->Instance == SPI2) {
     (void)_hspi;
-    TXfinished = 1;
+    // HAL::SPI::callback_function();
+    transactions_ctr++;
+    // TXfinished = 1;
+    // spi_set_nss(true);
 }
 
 void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *_hspi) {
     // if(hspi->Instance == SPI2) {
     (void)_hspi;
+    // HAL::SPI::callback_function();
     transactions_ctr++;
-    RXfinished = 1;
+    // RXfinished = 1;
 }
 // void HAL_SPI_TxHalfCpltCallback(SPI_HandleTypeDef *_hspi) {
 //     // if(hspi->Instance == SPI2) {
@@ -65,7 +69,7 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *_hspi) {
 void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *_hspi) {
     transactions_ctr++;
     (void)_hspi;
-    spi_set_nss(true);
+    // spi_set_nss(true);
     // HAL::SPI::callback_function();
     // TXfinished = 1;
 }
@@ -94,8 +98,8 @@ int8_t SPI::read_registers(std::byte reg_address, std::byte* reg_values, uint8_t
     }
 
     auto tx_byte = reg_address | SPI_READ;
-    return HAL::SPI::dma_receive(&tx_byte, &reg_values[-1], size + 1);
-    // return HAL::SPI::transaction(&tx_byte, &reg_values[-1], size + 1);
+    // return HAL::SPI::dma_receive(&tx_byte, &reg_values[-1], size + 1);
+    return HAL::SPI::transaction(&tx_byte, &reg_values[-1], size + 1);
 }
 
 int8_t SPI::read_register(std::byte reg_address, std::byte* reg_value) {
@@ -130,6 +134,9 @@ int8_t SPI::transaction(std::byte* tx, std::byte* rx, uint8_t size) {
                                           ,
                                           TRANSMIT_DELAY
     );
+    if (status == 0) {
+        transactions_ctr++;
+    }
     spi_set_nss(true);
 
     return (status == HAL_OK) ? 0 : -status;
@@ -141,28 +148,38 @@ int8_t SPI::dma_receive(std::byte* tx, std::byte* rx, uint8_t size) {
     }
     // spi_set_nss(false);
     if (hspi->ErrorCode != HAL_SPI_ERROR_NONE) {
+        // hspi->ErrorCode = HAL_SPI_ERROR_NONE;
         return -1;
     }
-    if (hspi->State != HAL_SPI_STATE_READY) {
+    // if (hspi->State != HAL_SPI_STATE_READY) {
+    //     return -1;
+    // }
+    if (hdma_spi2_rx.State != HAL_DMA_STATE_READY) {
+        int16_t rx_extra[3];
+        HAL_SPI_Receive(hspi,
+                            reinterpret_cast<uint8_t*>(rx_extra),
+                            size,
+                            TRANSMIT_DELAY
+        );
         return -1;
     }
-    // auto status = HAL_SPI_TransmitReceive_DMA(hspi, reinterpret_cast<uint8_t*>(tx),
-    //                                     reinterpret_cast<uint8_t*>(rx), (uint16_t)size);
-    // return (status == HAL_OK) ? 0 : -status;
-    int8_t status = 0;
-    if (hspi->State < HAL_SPI_STATE_BUSY_TX) {
-    // if (TXfinished) {
-        // spi_set_nss(false);
-        status = HAL_SPI_Transmit_DMA(hspi, reinterpret_cast<uint8_t*>(tx), (uint16_t)size);
-        TXfinished = status? 0: 1;
-    }
-    if (hspi->State < HAL_SPI_STATE_BUSY_RX) {
-    // if (RXfinished) {
-        status = HAL_SPI_Receive_DMA(hspi, reinterpret_cast<uint8_t*>(rx), (uint16_t)size);
-        RXfinished = status? 0: 1;
-        // spi_set_nss(true);
-    }
+    auto status = HAL_SPI_TransmitReceive_DMA(hspi, reinterpret_cast<uint8_t*>(tx),
+                                        reinterpret_cast<uint8_t*>(rx), (uint16_t)size);
     return (status == HAL_OK) ? 0 : -status;
+    // int8_t status = 0;
+    // if (hdma_spi2_tx.State == HAL_DMA_STATE_READY) {
+    // // if (TXfinished) {
+    //     // spi_set_nss(false);
+    //     status = HAL_SPI_Transmit_DMA(hspi, reinterpret_cast<uint8_t*>(tx), (uint16_t)size);
+    //     TXfinished = status? 0: 1;
+    // }
+    // if (hdma_spi2_rx.State == HAL_DMA_STATE_READY) {
+    // // if (RXfinished) {
+    //     status = HAL_SPI_Receive_DMA(hspi, reinterpret_cast<uint8_t*>(rx), (uint16_t)size);
+    //     RXfinished = status? 0: 1;
+    //     spi_set_nss(false);
+    // }
+    // return (status == HAL_OK) ? 0 : -status;
     // if (hspi->State == HAL_SPI_STATE_ERROR) {
     //     HAL_SPI_FlushRxFifo(hspi);
     //     // &hspi->State = HAL_SPI_STATE_BUSY_TX;

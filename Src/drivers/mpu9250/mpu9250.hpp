@@ -41,8 +41,8 @@ public:
     /**
      * @brief This function is called by SPI::set_callback
      */
-    void real_accel_and_gyro(std::array<int16_t, 3>* accel, std::array<int16_t, 3>* gyro) const;
-    // static void real_accel_and_gyro(std::array<int16_t, 3>* accel, std::array<int16_t, 3>* gyro);
+    // void real_accel_and_gyro(std::array<int16_t, 3>* accel, std::array<int16_t, 3>* gyro) const;
+    static void real_accel_and_gyro();
     void get_tr();
     uint64_t transaction_ctnr = 0;
     static std::array<int16_t, 3>*  acceleration;
