@@ -6,6 +6,7 @@ add_executable(${EXECUTABLE}
     ${APPLICATION_SOURCES}
     ${BUILD_SRC_DIR}/params.cpp
     ${ROOT_DIR}/Src/common/algorithms.cpp
+    ${ROOT_DIR}/Src/common/FFT.cpp
     ${ROOT_DIR}/Src/common/application.cpp
     ${ROOT_DIR}/Src/common/module.cpp
 
@@ -15,6 +16,7 @@ add_executable(${EXECUTABLE}
     ${CMAKE_CURRENT_LIST_DIR}/pwm.cpp
     ${CMAKE_CURRENT_LIST_DIR}/iwdg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/led.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/spi.cpp
     ${CMAKE_CURRENT_LIST_DIR}/temperature_sensor.cpp
     ${CMAKE_CURRENT_LIST_DIR}/platform_specific.cpp
 )
@@ -23,9 +25,13 @@ target_include_directories(${EXECUTABLE} PRIVATE
     ${BUILD_SRC_DIR}
     ${APPLICATION_HEADERS}
     ${ROOT_DIR}/Src/common
+    ${ROOT_DIR}/Src/platform/ubuntu/math
 
     ${CMAKE_CURRENT_LIST_DIR}
 )
+
+target_link_libraries(${EXECUTABLE} ${FFTW_LIBRARIES})
+target_link_libraries(${EXECUTABLE} /usr/local/lib/libfftw3.a)
 
 # Post-build
 add_custom_command(TARGET ${EXECUTABLE}

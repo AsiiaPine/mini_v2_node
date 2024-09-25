@@ -44,13 +44,13 @@ sitl_dronecan: checks clean
 	cd ${BUILD_OBJ_DIR} && cmake -DCAN_PROTOCOL=dronecan -DUSE_PLATFORM_UBUNTU=ON -DCMAKE_BUILD_TYPE=DEBUG -G "Unix Makefiles" ../.. && make
 dronecan_v3: checks clean
 	mkdir -p ${BUILD_OBJ_DIR}
-	cd ${BUILD_OBJ_DIR} && cmake -DCAN_PROTOCOL=dronecan -DUSE_PLATFORM_NODE_V3=ON ${CMAKE_FLAGS} -G "Unix Makefiles" ../.. && make
+	cd ${BUILD_OBJ_DIR} && cmake -DCAN_PROTOCOL=dronecan -DUSE_PLATFORM_NODE_V3=ON -G "Unix Makefiles" ../.. && make
 
 
 # Cyphal & DroneCAN
 v3: checks generate_dsdl clean
 	mkdir -p ${BUILD_OBJ_DIR}
-	cd ${BUILD_OBJ_DIR} && cmake -DCAN_PROTOCOL=both -DUSE_PLATFORM_NODE_V3=ON -G "Unix Makefiles" ../.. && make
+	cd ${BUILD_OBJ_DIR} && cmake ${} -DCAN_PROTOCOL=both -DUSE_PLATFORM_NODE_V3=ON -G "Unix Makefiles" ../.. && make
 
 # Common:
 checks:
@@ -65,3 +65,9 @@ clean:
 	-rm -fR ${BUILD_OBJ_DIR}/
 distclean:
 	-rm -fR ${BUILD_DIR}/
+
+TESTS_BUILD_DIR=${ROOT_DIR}/build/tests
+tests:
+	-rm -fR ${TESTS_BUILD_DIR}/
+	mkdir -p ${TESTS_BUILD_DIR}
+	cd ${TESTS_BUILD_DIR} && cmake -S Tests/ -DTEST=ON -DUSE_PLATFORM_UBUNTU=ON -DCOVERAGE=1 -DTEST_NUM=1 -G "Unix Makefiles" ../.. && make

@@ -43,7 +43,7 @@ void Mpu9250::get_tr() {
 }
 
 int8_t Mpu9250::read_accelerometer(std::array<int16_t, 3>* accel) const {
-    std::array<std::byte, 6> buffer;
+    static std::array<std::byte, 6> buffer = {};
     auto reg = std::byte(Mpu9250Resgiter::ACCEL_XOUT_H);
     if (auto res = HAL::SPI::read_registers(reg, buffer.data(), 6); res < 0) {
         return res;
@@ -57,7 +57,7 @@ int8_t Mpu9250::read_accelerometer(std::array<int16_t, 3>* accel) const {
 }
 
 int8_t Mpu9250::read_gyroscope(std::array<int16_t, 3>* gyro) const {
-    std::array<std::byte, 6> buffer;
+    static std::array<std::byte, 6> buffer = {};
     auto reg = std::byte(Mpu9250Resgiter::GYRO_XOUT_H);
     if (auto res = HAL::SPI::read_registers(reg, buffer.data(), buffer.size()); res < 0) {
         return res;

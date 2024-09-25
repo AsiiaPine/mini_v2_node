@@ -12,6 +12,7 @@
 #include "publisher.hpp"
 #include "drivers/mpu9250/mpu9250.hpp"
 #include "logger.hpp"
+#include "common/FFT.hpp"
 
 #ifdef __cplusplus
 extern "C" {
@@ -19,7 +20,7 @@ extern "C" {
 
 class ImuModule : public Module {
 public:
-    ImuModule() : Module(2000.0, Protocol::DRONECAN) {}
+    ImuModule() : Module(3000.0, Protocol::DRONECAN) {}
     void init() override;
 
 protected:
@@ -32,7 +33,7 @@ private:
     Mpu9250 imu;
     bool initialized{false};
     bool enabled{false};
-
+    FFT fft = FFT();
     Logger logger = Logger("IMU");
 
     static constexpr float raw_gyro_to_rad_per_second(int16_t raw_gyro) {
