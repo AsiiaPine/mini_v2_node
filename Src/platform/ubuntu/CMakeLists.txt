@@ -25,12 +25,10 @@ target_include_directories(${EXECUTABLE} PRIVATE
     ${BUILD_SRC_DIR}
     ${APPLICATION_HEADERS}
     ${ROOT_DIR}/Src/common
-    ${ROOT_DIR}/Src/platform/ubuntu/math
 
     ${CMAKE_CURRENT_LIST_DIR}
 )
 
-target_link_libraries(${EXECUTABLE} ${FFTW_LIBRARIES})
 target_link_libraries(${EXECUTABLE} /usr/local/lib/libfftw3.a)
 
 # Post-build

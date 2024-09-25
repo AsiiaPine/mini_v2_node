@@ -26,9 +26,8 @@ function(gen_test app_name test_file)
     add_executable(${app_name} ${test_file})
     if (${app_name} STREQUAL "test_fft")
         target_include_directories(${app_name} PUBLIC ${ROOT_DIR}/Src/common)
-        target_include_directories(${app_name} PUBLIC ${ROOT_DIR}/Src/platform/ubuntu/math)
-        # target_sources(${app_name} PUBLIC )
-        # ${ROOT_DIR}/Src/common/FFT.cpp ${ROOT_DIR}/Src/platform/stm32/math/arm_rfft_q15.c ${ROOT_DIR}/Src/platform/stm32/math/arm_mult_q15.c)
+        target_include_directories(${app_name} PUBLIC ${ROOT_DIR}/Src/platform/ubuntu)
+        target_sources(${app_name} PUBLIC ${ROOT_DIR}/Src/common/FFT.cpp)
     endif()
 
     # Link libraries to the target

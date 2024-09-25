@@ -8,20 +8,12 @@
 #ifndef SRC_COMMON_ALGORITHMS_FFT_H_
 #define SRC_COMMON_ALGORITHMS_FFT_H_
 
-#include <stdint.h>
-#include <string>
-#include <iostream>
-
 #include "rfft.hpp"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define M_2PI           6.28318530717958647692
-#define M_PI            3.14159265358979323846
-#define M_PI_2          1.57079632679489661923
-#define M_PI_4          0.78539816339744830962
 #define FFT_MAX_SIZE    1024
 #define MAX_NUM_PEAKS   3
 #define MIN_SNR         1.0f
@@ -76,11 +68,11 @@ private:
     }
     #ifndef HAL_MODULE_ENABLED
         // plan for the r2c transform from fftw3 library.
-        fftw_plan rfft_plan;
+        fftw_plan rfft_spec;
     #else
         // specification of arm_rfft_instance_q15
         // https://arm-software.github.io/CMSIS_5/DSP/html/group__RealFFT.html
-        arm_rfft_instance_q15 _rfft_q15;
+        arm_rfft_instance_q15 rfft_spec;
     #endif
 };
 

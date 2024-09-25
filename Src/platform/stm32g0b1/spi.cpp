@@ -19,7 +19,6 @@ extern DMA_HandleTypeDef hdma_spi2_tx;
 
 volatile uint8_t TXfinished = 1;
 volatile uint8_t RXfinished = 1;
-static uint64_t transactions_ctr = 0;
 
 static void spi_set_nss(bool nss_state) {
 #ifdef SPI2_NSS_GPIO_Port
@@ -46,7 +45,6 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *_hspi) {
     // if(hspi->Instance == SPI2) {
     (void)_hspi;
     // HAL::SPI::callback_function();
-    transactions_ctr++;
     // TXfinished = 1;
     // spi_set_nss(true);
 }
@@ -55,7 +53,6 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *_hspi) {
     // if(hspi->Instance == SPI2) {
     (void)_hspi;
     // HAL::SPI::callback_function();
-    transactions_ctr++;
     // RXfinished = 1;
 }
 // void HAL_SPI_TxHalfCpltCallback(SPI_HandleTypeDef *_hspi) {
@@ -67,7 +64,6 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *_hspi) {
 // }
 
 void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *_hspi) {
-    transactions_ctr++;
     (void)_hspi;
     // spi_set_nss(true);
     // HAL::SPI::callback_function();
@@ -87,9 +83,7 @@ void SPI::setup_callback() {
     // HAL_SPI_RegisterCallback(&hspi2, HAL_SPI_TX_COMPLETE_CB_ID, HAL_SPI_TxCpltCallback);
     // HAL_SPI_RegisterCallback(&hspi2, HAL_SPI_TX_RX_COMPLETE_CB_ID, HAL_SPI_TxRxCpltCallback);
 }
-int get_transaction_cntr() {
-    return transactions_ctr;
-}
+
 void (*SPI::callback_function)() = nullptr;
 
 int8_t SPI::read_registers(std::byte reg_address, std::byte* reg_values, uint8_t size) {

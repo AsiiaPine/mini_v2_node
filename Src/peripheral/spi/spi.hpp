@@ -13,8 +13,6 @@
 
 namespace HAL {
 
-int get_transaction_cntr();
-
 class SPI {
 public:
     /**

@@ -17,24 +17,9 @@ bool FFT::init(uint16_t window_size, uint16_t num_axes, float sample_rate_hz) {
     n_axes = num_axes;
     _sample_rate_hz = sample_rate_hz;
     _resolution_hz =  sample_rate_hz / size;
-    for (int n = 0; n < size; n++) {
-        const float hanning_value = 0.5f * (1.f - cos(M_2PI * n / (size - 1)));
-        #ifndef HAL_MODULE_ENABLED
-            _hanning_window[n] = hanning_value;
-        #else
-            arm_float_to_q15(&hanning_value, &_hanning_window[n], 1);
-        #endif
-    }
-    bool buffers_allocated = AllocateBuffers(window_size);
-    #ifndef HAL_MODULE_ENABLED
-        rfft_plan = init_rfft(size);
-        // rfft_plan = init_rfft(_fft_input_buffer, _fft_outupt_buffer, size);
-    #else
-        // _fft_input_buffer = new real_t[window_size];
-        // _fft_outupt_buffer = new real_t[window_size * 2];
-        init_rfft(size, _rfft_q15);
 
-    #endif
+    bool buffers_allocated = AllocateBuffers(window_size);
+    rfft_spec = init_rfft(_hanning_window, _fft_input_buffer, _fft_outupt_buffer, size);
     return buffers_allocated;
 }
 
@@ -58,19 +43,8 @@ void FFT::update(real_t *input) {
             if (_fft_updated) {
                 continue;
             }
-            #ifndef HAL_MODULE_ENABLED
-                // windowing
-                for (int i = 0; i < size; i++) {
-                    _fft_input_buffer[i] = _hanning_window[i] * data_buffer[axis][i];
-                }
-                // fft
-                rfft_one_cycle(rfft_plan, _fft_input_buffer, _fft_outupt_buffer, size);
-            #else
-                // windowing
-                arm_mult_q15(data_buffer[axis], _hanning_window, _fft_input_buffer, size);
-                // fft
-                arm_rfft_q15(&_rfft_q15, _fft_input_buffer, _fft_outupt_buffer);
-            #endif
+            apply_hanning_window(data_buffer[axis], _fft_input_buffer, _hanning_window, size);
+            rfft_one_cycle(rfft_spec, _fft_input_buffer, _fft_outupt_buffer);
             _fft_updated = true;
             find_peaks(axis);
 
@@ -80,7 +54,6 @@ void FFT::update(real_t *input) {
             memmove(&data_buffer[axis][0], &data_buffer[axis][overlap_start],
                     sizeof(real_t) * overlap_start * 3);
             buffer_index = overlap_start * 3;
-        // }
     }
 }
 

@@ -79,7 +79,6 @@ void ImuModule::spin_once() {
             pub.msg.timestamp = HAL_GetTick() * 1000;
             pub.publish();
         }
-        imu.get_tr();
         prev_time = HAL_GetTick();
         snprintf(buffer, sizeof(buffer), "peak freq: %f %f %f, peak SNR: %f %f %f",
                 fft.peak_frequencies[0][0],
