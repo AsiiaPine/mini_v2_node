@@ -1,8 +1,8 @@
 #ifndef SRC_PLATFORM_STM32_MATH_RFFT_HPP_
 #define SRC_PLATFORM_STM32_MATH_RFFT_HPP_
 
-#include "arm_math.h"
-#include "arm_const_structs.h"
+#include "platform/stm32/math/arm_math.h"
+#include "platform/stm32/math/arm_const_structs.h"
 typedef q15_t real_t;
 #define M_2PI           6.28318530717958647692
 
@@ -74,6 +74,10 @@ The function is written based on CMSIS-DSP library.
 */
 inline void rfft_one_cycle(arm_rfft_instance_q15 _rfft_q15, real_t* in, real_t* out) {
     arm_rfft_q15(&_rfft_q15, in, out);
+}
+
+inline void convert_real_to_float(real_t* in, float* out, uint16_t N) {
+    arm_q15_to_float(in, out, N);
 }
 
 #endif  // SRC_PLATFORM_STM32_MATH_RFFT_HPP_

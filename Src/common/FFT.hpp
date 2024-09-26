@@ -66,14 +66,14 @@ private:
             && _fft_input_buffer
             && _fft_outupt_buffer);
     }
-    #ifndef HAL_MODULE_ENABLED
-        // plan for the r2c transform from fftw3 library.
-        fftw_plan rfft_spec;
-    #else
+    // #ifdef HAL_MODULE_ENABLED
         // specification of arm_rfft_instance_q15
         // https://arm-software.github.io/CMSIS_5/DSP/html/group__RealFFT.html
         arm_rfft_instance_q15 rfft_spec;
-    #endif
+    // #else
+    //     // plan for the r2c transform from fftw3 library.
+    //     fftw_plan rfft_spec;
+    // #endif
 };
 
 #ifdef __cplusplus

@@ -27,7 +27,7 @@ bool FFT::init(uint16_t window_size, uint16_t num_axes, float sample_rate_hz) {
 void FFT::update(real_t *input) {
     real_t *data_buffer[] {data_buffer_x, data_buffer_y, data_buffer_z};
 
-    for (int axis = 0; axis < n_axes; axis++) {
+    for (uint8_t axis = 0; axis < n_axes; axis++) {
         uint16_t &buffer_index = _fft_buffer_index[axis];
 
         // for (int n = 0; n < input_size; n++) {
@@ -68,10 +68,16 @@ void FFT::find_peaks(uint8_t axis) {
     uint16_t num_peaks_found = 0;
     // FFT output buffer is ordered as follows:
     // [real[0], imag[0], real[1], imag[1], real[2], imag[2] ... real[(N/2)-1], imag[(N/2)-1]
+    float real, imag;
     for (uint16_t fft_index = 2; fft_index < size; fft_index += 2) {
-        const float real = _fft_outupt_buffer[fft_index];
-        const float imag = _fft_outupt_buffer[fft_index + 1];
-
+        // #ifdef HAL_MODULE_ENABLED
+        //     arm_q15_to_float(_fft_outupt_buffer[fft_index], real, 1);
+        //     arm_q15_to_float(_fft_outupt_buffer[fft_index + 1], imag, 1);
+        // #endif
+        // arm_q15_to_float(_fft_outupt_buffer[fft_index], real, 1);
+        // arm_q15_to_float(_fft_outupt_buffer[fft_index + 1], imag, 1);
+        convert_real_to_float(_fft_outupt_buffer[fft_index], real, 1);
+        convert_real_to_float(_fft_outupt_buffer[fft_index + 1], imag, 1);
         const float fft_magnitude = sqrtf(real * real + imag * imag);
 
         int bin_index = fft_index / 2;

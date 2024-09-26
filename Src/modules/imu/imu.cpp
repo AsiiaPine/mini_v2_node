@@ -7,6 +7,7 @@
 #include "imu.hpp"
 #include "params.hpp"
 #include "peripheral/spi/spi.hpp"
+#include "arm_math.h"
 
 REGISTER_MODULE(ImuModule)
 
@@ -61,14 +62,18 @@ void ImuModule::spin_once() {
 
     auto status = imu.read_accelerometer(&accel_raw);
     if (status >= 0) {
-        static real_t accel[3] = {
+        static real_t accel_q15[3];
+        static float accel[3] = {
                 raw_accel_to_meter_per_square_second(accel_raw[0]),
                 raw_accel_to_meter_per_square_second(accel_raw[1]),
                 raw_accel_to_meter_per_square_second(accel_raw[2])};
         pub.msg.accelerometer_latest[0] = accel[0];
         pub.msg.accelerometer_latest[1] = accel[1];
         pub.msg.accelerometer_latest[2] = accel[2];
-        fft.update(accel);
+        #ifdef HAL_MODULE_ENABLED
+            arm_float_to_q15(accel, accel_q15, 3);
+        #endif
+        fft.update(accel_q15);
         updated = true;
     }
 

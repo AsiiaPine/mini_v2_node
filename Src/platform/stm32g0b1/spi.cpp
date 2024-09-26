@@ -128,9 +128,6 @@ int8_t SPI::transaction(std::byte* tx, std::byte* rx, uint8_t size) {
                                           ,
                                           TRANSMIT_DELAY
     );
-    if (status == 0) {
-        transactions_ctr++;
-    }
     spi_set_nss(true);
 
     return (status == HAL_OK) ? 0 : -status;

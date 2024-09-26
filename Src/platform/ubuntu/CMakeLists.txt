@@ -29,6 +29,10 @@ target_include_directories(${EXECUTABLE} PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}
 )
 
+find_package(PkgConfig REQUIRED)
+pkg_search_module(FFTW REQUIRED fftw3)
+include_directories(${FFTW_INCLUDE_DIRS})
+link_libraries(${FFTW_LIBRARIES})
 target_link_libraries(${EXECUTABLE} /usr/local/lib/libfftw3.a)
 
 # Post-build

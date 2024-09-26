@@ -51,6 +51,12 @@ inline void rfft_one_cycle(fftw_plan plan, real_t* in, real_t* out) {
     fftw_execute_r2r(plan, in, out);
 }
 
+inline void convert_real_to_float(real_t* in, float* out, uint16_t N) {
+    for (int n = 0; n < N; n++) {
+        out[n] = (float)in[n];
+    }
+}
+
 // // for fftw2.1.5
 // /*
 // The function init_rfft creates a plan for the r2c transform from fftw3 library.

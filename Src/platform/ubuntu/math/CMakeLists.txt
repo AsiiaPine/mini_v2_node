@@ -1,5 +1,0 @@
-# target_link_libraries(${EXECUTABLE} PkgConfig::FFTW)
-find_package(PkgConfig REQUIRED)
-pkg_search_module(FFTW REQUIRED fftw3)
-include_directories(${FFTW_INCLUDE_DIRS})
-link_libraries(${FFTW_LIBRARIES})
