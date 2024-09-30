@@ -16,18 +16,23 @@ typedef double real_t;
 extern "C" {
 #endif
 
+inline real_t* allocate_buffer(uint16_t N) {
+    return fftw_alloc_real(N);
+}
+
 // for fftw3.0
-inline fftw_plan init_rfft(real_t* hanning_window, real_t* in, real_t* out, uint16_t N) {
+inline fftw_plan init_rfft(real_t** hanning_window, real_t** in, real_t** out, uint16_t N) {
+    *hanning_window = fftw_alloc_real(N);
     for (int n = 0; n < N; n++) {
         const float hanning_value = 0.5f * (1.f - cos(M_2PI * n / (N - 1)));
-        hanning_window[n] = hanning_value;
+        (*hanning_window)[n] = hanning_value;
     }
-    int N_out = N / 2 + 1;  // Output size for r2c transform
+    // int N_out = 2*N;  // Output size for r2c transform
     // Allocate input and output arrays
-    in = fftw_alloc_real(N);
-    out = fftw_alloc_real(N_out);
+    *in = fftw_alloc_real(N);
+    *out = fftw_alloc_real(N);
     // Create plan
-    return fftw_plan_r2r_1d(N, in, out, FFTW_R2HC, FFTW_ESTIMATE);
+    return fftw_plan_r2r_1d(N, *in, *out, FFTW_R2HC, FFTW_ESTIMATE);
 }
 
 /*
@@ -43,6 +48,15 @@ inline void apply_hanning_window(real_t* in, real_t* out, real_t* hanning_window
     }
 }
 
+// FFT output buffer is ordered as follows:
+    // [real[0], real[1], real[2], ... real[(N/2)-1], imag[0], imag[1], imag[2], ... imag[(N/2)-1]
+inline void get_real_imag_by_index(real_t* in, real_t out[2], uint16_t N, int index) {
+    out[0] = in[index];
+    // For FFTW_R2HC kind the imaginary part is zero
+    // due to symmetries of the real-input DFT, and is not stored
+    out[1] = 0;
+}
+
 /*
 The function written based on fftw3 library.
 @param plan: The plan for the r2c transform.
@@ -51,12 +65,17 @@ inline void rfft_one_cycle(fftw_plan plan, real_t* in, real_t* out) {
     fftw_execute_r2r(plan, in, out);
 }
 
-inline void convert_real_to_float(real_t* in, float* out, uint16_t N) {
+inline void convert_real_t_to_float(real_t* in, float* out, uint16_t N) {
     for (int n = 0; n < N; n++) {
         out[n] = (float)in[n];
     }
 }
 
+inline void convert_float_to_real_t(float* in, real_t* out, uint16_t N) {
+    for (int n = 0; n < N; n++) {
+        out[n] = (real_t)in[n];
+    }
+}
 // // for fftw2.1.5
 // /*
 // The function init_rfft creates a plan for the r2c transform from fftw3 library.

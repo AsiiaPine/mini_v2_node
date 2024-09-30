@@ -1,10 +1,11 @@
 #ifndef SRC_PLATFORM_STM32_MATH_RFFT_HPP_
 #define SRC_PLATFORM_STM32_MATH_RFFT_HPP_
 
-#include "platform/stm32/math/arm_math.h"
-#include "platform/stm32/math/arm_const_structs.h"
+#include "arm_math.h"
+#include "arm_const_structs.h"
 typedef q15_t real_t;
 #define M_2PI           6.28318530717958647692
+
 
 /*
 The function specifies arm_rfft_instance_q15 from CMSIS-DSP library based on the window size.
@@ -15,10 +16,8 @@ The function specifies arm_rfft_instance_q15 from CMSIS-DSP library based on the
 @param N: The size of the Hanning window.
 @return: The plan for the r2c transform.
 */
-inline arm_rfft_instance_q15 init_rfft(real_t* hanning_window, real_t* in,
-                                        real_t* out, uint16_t N) {
-    (void)in;
-    (void)out;
+inline arm_rfft_instance_q15 init_rfft(real_t** hanning_window, real_t** in,
+                                        real_t** out, uint16_t N) {
     arm_rfft_instance_q15 _rfft_q15;
     switch (N) {
         case 256:
@@ -39,6 +38,7 @@ inline arm_rfft_instance_q15 init_rfft(real_t* hanning_window, real_t* in,
             _rfft_q15.pCfft = &arm_cfft_sR_q15_len512;
             break;
         default:
+            N = 256;
             _rfft_q15.fftLenReal = 256;
             _rfft_q15.twidCoefRModifier = 32U;
             _rfft_q15.pCfft = &arm_cfft_sR_q15_len128;
@@ -47,11 +47,16 @@ inline arm_rfft_instance_q15 init_rfft(real_t* hanning_window, real_t* in,
     _rfft_q15.pTwiddleBReal = (real_t *) realCoefBQ15;
     _rfft_q15.ifftFlagR = 0;
     _rfft_q15.bitReverseFlagR = 1;
+
+    *in = new real_t[N];
+    *out = new real_t[N * 2];
+    *hanning_window = new real_t[N];
     for (int n = 0; n < N; n++) {
         const float hanning_value = 0.5f * (1.f - cos(M_2PI * n / (N - 1)));
-        hanning_window[n] = hanning_value;
-        arm_float_to_q15(&hanning_value, &hanning_window[n], 1);
+        *hanning_window[n] = hanning_value;
+        arm_float_to_q15(&hanning_value, hanning_window[n], 1);
     }
+
     return _rfft_q15;
 }
 
@@ -64,6 +69,7 @@ The function is written based on CMSIS-DSP library.
 */
 inline void apply_hanning_window(real_t* in, real_t* out, real_t* hanning_window, int N) {
     arm_mult_q15(in, hanning_window, out, N);
+    (void)out;
 }
 
 /*
@@ -76,8 +82,19 @@ inline void rfft_one_cycle(arm_rfft_instance_q15 _rfft_q15, real_t* in, real_t* 
     arm_rfft_q15(&_rfft_q15, in, out);
 }
 
-inline void convert_real_to_float(real_t* in, float* out, uint16_t N) {
+inline void convert_real_t_to_float(real_t* in, float* out, uint16_t N) {
     arm_q15_to_float(in, out, N);
+}
+
+inline void convert_float_to_real_t(float* in, real_t* out, uint16_t N) {
+    arm_float_to_q15(in, out, N);
+}
+
+// FFT output buffer is ordered as follows:
+    // [real[0], imag[0], real[1], imag[1], real[2], imag[2] ... real[(N/2)-1], imag[(N/2)-1]
+inlune void get_real_imag_by_index(real_t* in, real_t* out, uint16_t N, int index) {
+    out[0] = in[2 * index];
+    out[1] = in[2 * index + 1];
 }
 
 #endif  // SRC_PLATFORM_STM32_MATH_RFFT_HPP_

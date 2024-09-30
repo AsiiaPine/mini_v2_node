@@ -3,7 +3,7 @@
 
 # Variables
 CC := arm-none-eabi-gcc
-CFLAGS := "-g -Og -DDEBUG"
+CFLAGS := "-g -O0 -o -DDEBUG"
 
 # Make sure these flags are used in the cmake build command as well
 CMAKE_FLAGS := -DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CC} -DCMAKE_C_FLAGS=${CFLAGS} -DCMAKE_CXX_FLAGS=${CFLAGS} -DCMAKE_BUILD_TYPE=Debug

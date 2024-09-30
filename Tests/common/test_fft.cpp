@@ -64,16 +64,16 @@ InitParametersOneSignalWithRes ParametrizedInitParams[8] = {
       InitSignalParameters{ .sample_rate_hz = 24,   .freq_hz  = 3,    .amplitude    = 1}}, true},
 
     {{InitFFTParameters{    .sample_rate_hz = 1000, .n_axes   = 1,    .window_size  = 1000},
-      InitSignalParameters{ .sample_rate_hz = 1000, .freq_hz  = 100,  .amplitude    = 1}}, true},
+      InitSignalParameters{ .sample_rate_hz = 1000, .freq_hz  = 100,  .amplitude    = 10}}, true},
 
     {{InitFFTParameters{    .sample_rate_hz = 1000, .n_axes   = 1,    .window_size  = 100},
-      InitSignalParameters{ .sample_rate_hz = 1000, .freq_hz  = 5,    .amplitude    = 1}}, true},
+      InitSignalParameters{ .sample_rate_hz = 1000, .freq_hz  = 5,    .amplitude    = 10}}, true},
 
     {{InitFFTParameters{    .sample_rate_hz = 2000, .n_axes   = 1,    .window_size  = 600},
-      InitSignalParameters{ .sample_rate_hz = 2000, .freq_hz  = 100,  .amplitude    = 1}}, true},
+      InitSignalParameters{ .sample_rate_hz = 2000, .freq_hz  = 100,  .amplitude    = 10}}, true},
 
     {{InitFFTParameters{    .sample_rate_hz = 2000, .n_axes   = 1,    .window_size  = 2000},
-      InitSignalParameters{ .sample_rate_hz = 2000, .freq_hz  = 100,  .amplitude    = 1}}, true},
+      InitSignalParameters{ .sample_rate_hz = 2000, .freq_hz  = 100,  .amplitude    = 10}}, true},
 
     {{InitFFTParameters{    .sample_rate_hz = 1024, .n_axes   = 1,    .window_size  = 1024},
       InitSignalParameters{ .sample_rate_hz = 1024, .freq_hz  = 100,  .amplitude    = 1}}, true},
@@ -228,9 +228,12 @@ public:
 
         // Print the signal parameters
         std::cout << "Signal Parameters: " << std::endl;
-        std::cout << "  Sample Rate (Hz): " << init_parameters.signals_parameters.sample_rate_hz << std::endl;
-        std::cout << "  Frequency (Hz): " << init_parameters.signals_parameters.freq_hz << std::endl;
-        std::cout << "  Amplitude: " << init_parameters.signals_parameters.amplitude << std::endl;
+        std::cout << "  Sample Rate (Hz): " << init_parameters.signals_parameters.sample_rate_hz
+                    << std::endl;
+        std::cout << "  Frequency (Hz): " << init_parameters.signals_parameters.freq_hz
+                    << std::endl;
+        std::cout << "  Amplitude: " << init_parameters.signals_parameters.amplitude
+                    << std::endl;
 
         init();
     }
@@ -251,7 +254,6 @@ TEST_P(TestFFTOnSignalParametrized, CheckOnWindow) {
                         fft.peak_frequencies[j][i]);
             printf(" snr:\t%f\n", fft.peak_snr[j][i]);
         }
-        printf("real freq %d: %f\n", j, signals_generator[j].freq_hz);
     }
     printf("fft resolution: %f\n", fft._resolution_hz);
     if (result) {
