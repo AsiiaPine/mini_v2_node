@@ -23,13 +23,13 @@ auto IsInRange(T lo, T hi) {
                << val << " is outside the range " << a << " to " << b;
 }
 
-struct InitFFTParameters   {
+struct InitFFTParamType   {
     float sample_rate_hz;
     uint8_t n_axes;
     uint16_t window_size;
 };
 
-struct InitSignalParameters   {
+struct InitOneSignParamType   {
     float sample_rate_hz = 0;
     float freq_hz = 0;
     float amplitude = 0;
@@ -38,7 +38,7 @@ struct InitSignalParameters   {
 class SinSignalGenerator {
 public:
     SinSignalGenerator(){}
-    explicit SinSignalGenerator(InitSignalParameters signal_parameters) {
+    explicit SinSignalGenerator(InitOneSignParamType signal_parameters) {
         this->sample_rate_hz = signal_parameters.sample_rate_hz;
         this->freq_hz = signal_parameters.freq_hz;
         this->amplitude = signal_parameters.amplitude;
@@ -78,7 +78,7 @@ public:
     std::vector<SinSignalGenerator> signals_generator;
 public:
     TetsFFTBase(/* args */);
-    void init(InitFFTParameters fft_parameters, InitSignalParameters* signals_parameters) {
+    void init(InitFFTParamType fft_parameters, InitOneSignParamType* signals_parameters) {
         fft.init(fft_parameters.window_size, fft_parameters.n_axes, fft_parameters.sample_rate_hz);
         signals_generator.resize(fft_parameters.n_axes);
         for (int i = 0; i < fft_parameters.n_axes; i++) {
@@ -96,29 +96,29 @@ TetsFFTBase::~TetsFFTBase() {
 }
 
 template <typename T>
-struct InitParameters   {
-    InitFFTParameters fft_parameters;
+struct InitParamType   {
+    InitFFTParamType fft_parameters;
     T signals_parameters;
 };
 
-struct InitParametersOneSignalWithRes {
-    InitParameters<InitSignalParameters> parameters;
+struct InitParamOneSignalWithRes {
+    InitParamType<InitOneSignParamType> parameters;
     bool result;
 };
 
-class TestFFTOnSignalParametrized : public TetsFFTBase, public
-                ::testing::WithParamInterface<InitParametersOneSignalWithRes> {
+class TestFFTOneSignalParametrized : public TetsFFTBase, public
+                ::testing::WithParamInterface<InitParamOneSignalWithRes> {
 };
 
-TEST_P(TestFFTOnSignalParametrized, CheckOnSeveralSignalsWindow) {
+TEST_P(TestFFTOneSignalParametrized, CheckOnSeveralSignalsWindow) {
     auto parameters = GetParam();
-    InitParameters init_parameters = parameters.parameters;
+    InitParamType init_parameters = parameters.parameters;
     bool result = parameters.result;
-    InitFFTParameters fft_parameters = init_parameters.fft_parameters;
+    InitFFTParamType fft_parameters = init_parameters.fft_parameters;
 
-    InitSignalParameters signal_parameters = init_parameters.signals_parameters;
+    InitOneSignParamType signal_parameters = init_parameters.signals_parameters;
     // expand signal_parameters to multiple axes if needed
-    InitSignalParameters signals_parameters[fft_parameters.n_axes];
+    InitOneSignParamType signals_parameters[fft_parameters.n_axes];
     for (int i = 0; i < fft_parameters.n_axes; i++) {
         signals_parameters[i] = signal_parameters;
     }
@@ -149,7 +149,7 @@ TEST_P(TestFFTOnSignalParametrized, CheckOnSeveralSignalsWindow) {
     // EXPECT_NEAR(fft.peak_snr[0][0], 1.0f, ABS_ERR);
 }
 
-// TEST_P(TestFFTOnSignalParametrized, CheckOnSeveralSignalsUpdateOnline) {
+// TEST_P(TestFFTOneSignalParametrized, CheckOnSeveralSignalsUpdateOnline) {
 //     auto parameters = GetParam();
 //     SinSignalGenerator signal_generator(parameters.sample_rate_hz,
 //                                         parameters.freq_hz,
@@ -167,27 +167,27 @@ TEST_P(TestFFTOnSignalParametrized, CheckOnSeveralSignalsWindow) {
 //     EXPECT_NEAR(fft.peak_snr[0][0], 1.0f, ABS_ERR);
 // }
 
-InitParametersOneSignalWithRes ParametrizedInitParams[7] = {
-    {{InitFFTParameters{    .sample_rate_hz = 10, .n_axes = 1,    .window_size = 5},
-      InitSignalParameters{ .sample_rate_hz = 10, .freq_hz = 5, .amplitude = 1}},  true},
+InitParamOneSignalWithRes OneSignalTestParams[7] = {
+    {{InitFFTParamType{    .sample_rate_hz = 10, .n_axes = 1,    .window_size = 5},
+      InitOneSignParamType{ .sample_rate_hz = 10, .freq_hz = 5, .amplitude = 1}},  true},
 
-    {{InitFFTParameters{    .sample_rate_hz = 300, .n_axes = 1,     .window_size = 600},
-      InitSignalParameters{ .sample_rate_hz = 300, .freq_hz = 100, .amplitude = 1}},  false},
+    {{InitFFTParamType{    .sample_rate_hz = 300, .n_axes = 1,     .window_size = 600},
+      InitOneSignParamType{ .sample_rate_hz = 300, .freq_hz = 100, .amplitude = 1}},  false},
 
-    {{InitFFTParameters{    .sample_rate_hz = 2000, .n_axes = 1,     .window_size = 600},
-      InitSignalParameters{ .sample_rate_hz = 2000, .freq_hz = 100, .amplitude = 1}},  true},
+    {{InitFFTParamType{    .sample_rate_hz = 2000, .n_axes = 1,     .window_size = 600},
+      InitOneSignParamType{ .sample_rate_hz = 2000, .freq_hz = 100, .amplitude = 1}},  true},
 
-    {{InitFFTParameters{    .sample_rate_hz = 300, .n_axes = 1,     .window_size = 600},
-      InitSignalParameters{ .sample_rate_hz = 1000, .freq_hz = 100, .amplitude = 1}},  false},
+    {{InitFFTParamType{    .sample_rate_hz = 300, .n_axes = 1,     .window_size = 600},
+      InitOneSignParamType{ .sample_rate_hz = 1000, .freq_hz = 100, .amplitude = 1}},  false},
 
-    {{InitFFTParameters{    .sample_rate_hz = 200,  .n_axes = 1,     .window_size = 400},
-      InitSignalParameters{ .sample_rate_hz = 1000, .freq_hz = 2000, .amplitude = 1}}, false},
+    {{InitFFTParamType{    .sample_rate_hz = 200,  .n_axes = 1,     .window_size = 400},
+      InitOneSignParamType{ .sample_rate_hz = 1000, .freq_hz = 2000, .amplitude = 1}}, false},
 
-    {{InitFFTParameters{    .sample_rate_hz = 1000, .n_axes = 1,     .window_size = 1024},
-      InitSignalParameters{ .sample_rate_hz = 1000, .freq_hz = 1000, .amplitude = 1}}, false},
+    {{InitFFTParamType{    .sample_rate_hz = 1000, .n_axes = 1,     .window_size = 1024},
+      InitOneSignParamType{ .sample_rate_hz = 1000, .freq_hz = 1000, .amplitude = 1}}, false},
 
-    {{InitFFTParameters{    .sample_rate_hz = 1000, .n_axes = 1,     .window_size = 1024},
-      InitSignalParameters{.sample_rate_hz = 10,    .freq_hz = 5,    .amplitude = 1}},  false},
+    {{InitFFTParamType{    .sample_rate_hz = 1000, .n_axes = 1,     .window_size = 1024},
+      InitOneSignParamType{.sample_rate_hz = 10,    .freq_hz = 5,    .amplitude = 1}},  false},
 };
 
 unsigned int seed = 0;
@@ -212,10 +212,10 @@ private:
 };
 
 
-INSTANTIATE_TEST_SUITE_P(TestFFTOnSignalParametrized,
-                         TestFFTOnSignalParametrized,
+INSTANTIATE_TEST_SUITE_P(TestFFTOneSignalParametrized,
+                         TestFFTOneSignalParametrized,
                          ::testing::ValuesIn(
-                             ParametrizedInitParams)
+                             OneSignalTestParams)
                          );
 
 int main(int argc, char** argv) {

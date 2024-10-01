@@ -48,13 +48,13 @@ inline arm_rfft_instance_q15 init_rfft(real_t** hanning_window, real_t** in,
     _rfft_q15.ifftFlagR = 0;
     _rfft_q15.bitReverseFlagR = 1;
 
-    *in = new real_t[N];
-    *out = new real_t[N * 2];
-    *hanning_window = new real_t[N];
+    *in = (real_t*) malloc(N * sizeof(real_t));
+    *out = (real_t*) malloc(N * 2 * sizeof(real_t));
+    *hanning_window = (real_t*) malloc(N * sizeof(real_t));
     for (int n = 0; n < N; n++) {
         const float hanning_value = 0.5f * (1.f - cos(M_2PI * n / (N - 1)));
-        *hanning_window[n] = hanning_value;
-        arm_float_to_q15(&hanning_value, hanning_window[n], 1);
+        (*hanning_window)[n] = hanning_value;
+        arm_float_to_q15(&hanning_value,  &(*hanning_window)[n], 1);
     }
 
     return _rfft_q15;
@@ -69,7 +69,6 @@ The function is written based on CMSIS-DSP library.
 */
 inline void apply_hanning_window(real_t* in, real_t* out, real_t* hanning_window, int N) {
     arm_mult_q15(in, hanning_window, out, N);
-    (void)out;
 }
 
 /*
@@ -92,7 +91,8 @@ inline void convert_float_to_real_t(float* in, real_t* out, uint16_t N) {
 
 // FFT output buffer is ordered as follows:
     // [real[0], imag[0], real[1], imag[1], real[2], imag[2] ... real[(N/2)-1], imag[(N/2)-1]
-inlune void get_real_imag_by_index(real_t* in, real_t* out, uint16_t N, int index) {
+inline void get_real_imag_by_index(real_t* in, real_t* out, uint16_t N, int index) {
+    (void)N;
     out[0] = in[2 * index];
     out[1] = in[2 * index + 1];
 }
