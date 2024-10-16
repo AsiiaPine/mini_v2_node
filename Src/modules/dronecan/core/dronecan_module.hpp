@@ -8,6 +8,8 @@
 #define SRC_DRONECAN_APPLICATION_DRONECAN_DRONECAN_MODULE_HPP_
 
 #include "module.hpp"
+#include "subscriber.hpp"
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -18,9 +20,11 @@ public:
     DronecanModule();
 
     void init() override;
-
+    static bool node_id_duplicated;
+    static int8_t node_id;
 protected:
     void spin_once() override;
+    static void node_status_callback(CanardRxTransfer *transfer);
 };
 
 #ifdef __cplusplus

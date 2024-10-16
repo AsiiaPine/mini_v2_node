@@ -12,6 +12,9 @@
 
 REGISTER_MODULE(DronecanModule)
 
+bool DronecanModule::node_id_duplicated = false;
+int8_t DronecanModule::node_id = 0;
+
 DronecanModule::DronecanModule() : Module(0, Protocol::DRONECAN) {
 }
 
@@ -25,11 +28,12 @@ void DronecanModule::init() {
     uavcanSetNodeName((const char*)paramsGetStringValue(node_name_param_idx));
 
     int param_node_id_value = paramsGetIntegerValue(IntParamsIndexes::PARAM_UAVCAN_NODE_ID);
-    auto node_id = std::clamp(param_node_id_value, 1, 126);
+    node_id = std::clamp(param_node_id_value, 1, 126);
     int8_t res = uavcanInitApplication(node_id);
 
     health = (res >= 0) ? Status::OK : Status::FATAL_MALFANCTION;
     mode = Mode::STANDBY;
+    uavcanSubscribe(UAVCAN_EXPAND(UAVCAN_PROTOCOL_NODE_STATUS), *node_status_callback);
 }
 
 void DronecanModule::spin_once() {
@@ -38,7 +42,18 @@ void DronecanModule::spin_once() {
     if (global_mode > 0 ) {
         global_mode -= 1;
     }
+    if (node_id_duplicated) {
+        health = Status::FATAL_MALFANCTION;
+        node_id_duplicated = false;
+    }
     uavcanSetNodeStatusMode(static_cast<NodeStatusMode_t>(global_mode));
     uavcanSetVendorSpecificStatusCode(ModuleManager::get_vssc());
     uavcanSpinOnce();
+}
+
+void DronecanModule::node_status_callback(CanardRxTransfer * transfer) {
+    if (transfer->source_node_id == node_id) {
+        node_id_duplicated = true;
+        return;
+    }
 }
