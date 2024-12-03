@@ -11,6 +11,7 @@ struct adcState {
     uint16_t v_5v;
     uint16_t version;
     uint16_t temperature;
+    uint16_t sensor;
 };
 adcState state = {};
 
@@ -19,6 +20,7 @@ int8_t AdcPeriphery::init() {
     state.current = 2048;
     state.v_in = 640;
     state.v_5v = 3200;
+    state.sensor = 0;
     _is_adc_already_inited = true;
     return 0;
 }
@@ -34,6 +36,8 @@ uint16_t AdcPeriphery::get(AdcChannel channel) {
         return state.temperature;
     case AdcChannel::ADC_5V:
         return state.v_5v;
+    case AdcChannel::ADC_SENSOR:
+        return state.sensor;
     default:
         break;
     }
