@@ -11,6 +11,9 @@
 #include "params.hpp"
 #include "peripheral/led/led.hpp"
 #include "peripheral/iwdg/iwdg.hpp"
+#include <cstdio>
+#include "common/logging.hpp"
+
 #ifdef STM32G0B1xx
 #include "adc.h"
 #endif
@@ -47,6 +50,11 @@ uint16_t CircuitPeriphery::temperature() {
     temperature_kelvin = (ADC_REF - adc_12b) / AVG_SLOPE + TEMP_REF + 273;
 #endif
     return temperature_kelvin;
+}
+
+uint16_t CircuitPeriphery::fuel_state() {
+    auto adc_12b = AdcPeriphery::get(AdcChannel::ADC_SENSOR);
+    return adc_12b;
 }
 
 BoardType CircuitPeriphery::detect_board_type() {

@@ -35,7 +35,7 @@ public:
      * @return Temperature, Kelvin
      */
     static uint16_t temperature();
-
+    static uint16_t fuel_state();
     /**
      * @return The current in Amperes if the hardware supports it, otherwise NaN.
      */

@@ -9,6 +9,8 @@
 extern ADC_HandleTypeDef hadc1;
 static uint32_t adc_current_avg = 0;
 static uint32_t adc_current_sum = 0;
+static uint32_t adc_fuel_state_avg = 0;
+static uint32_t adc_fuel_state_sum = 0;
 static uint32_t adc_dma_counter = 0;
 
 static inline uint16_t adc_dma_buffer[static_cast<uint8_t>(AdcChannel::ADC_NUMBER_OF_CNANNELS)];
@@ -43,12 +45,13 @@ uint16_t AdcPeriphery::get(AdcChannel channel) {
  */
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
     adc_dma_counter++;
-
+    adc_fuel_state_sum += adc_dma_buffer[static_cast<uint8_t>(AdcChannel::ADC_SENSOR)];
     adc_current_sum += adc_dma_buffer[static_cast<uint8_t>(AdcChannel::ADC_CURRENT)];
     if (adc_dma_counter > 4000) {
         adc_current_avg = adc_current_sum / adc_dma_counter;
         adc_current_sum = 0;
-
+        adc_fuel_state_avg = adc_fuel_state_sum / adc_dma_counter;
+        adc_fuel_state_sum = 0;
         adc_dma_counter = 0;
     }
 

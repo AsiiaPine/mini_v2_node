@@ -1,0 +1,44 @@
+fuel.empty_tank_enc_raw:
+  type: Integer
+  note: Defines raw sensor value that corresponds to the empty fuel tank.
+  enum: PARAM_FUEL_TANK_EMPTY
+  flags: mutable
+  default: 0
+  min: 0
+  max: 5000
+
+fuel.full_tank_enc_raw:
+  type: Integer
+  note: Defines raw sensor value that corresponds to the full fuel tank.
+  enum: PARAM_FUEL_TANK_FULL
+  flags: mutable
+  default: 0
+  min: 0
+  max: 5000
+
+fuel.volume:
+  type: Integer
+  note: Defines a volume of the fuel tank [cm3].
+  enum: PARAM_FUEL_TANK_VOLUME
+  flags: mutable
+  default: 5000
+  min: 0
+  max: 65535
+
+fuel.min_magnitude:
+  type: Integer
+  note: The minimal required magnitude.
+  enum: PARAM_FUEL_TANK_MIN_MAGNITUDE
+  flags: mutable
+  default: 5
+  min: 0
+  max: 255
+
+fuel.tank_id:
+  type: Integer
+  note: Defines an id of the fuel tank.
+  enum: PARAM_FUEL_TANK_ID
+  flags: mutable
+  default: 0
+  min: 0
+  max: 255
