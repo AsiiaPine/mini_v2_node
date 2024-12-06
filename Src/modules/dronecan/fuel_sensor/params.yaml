@@ -42,3 +42,75 @@ fuel.tank_id:
   default: 0
   min: 0
   max: 255
+
+fuel.ptc_step_1:
+  type: Integer
+  note: Defines ptc of the fuel tank for step 1.
+  enum: PARAM_FUEL_TANK_STEP_1
+  flags: mutable
+  default: 0
+  min: 0
+  max: 100
+
+fuel.ptc_step_2:
+  type: Integer
+  note: Defines ptc of the fuel tank for step 2.
+  enum: PARAM_FUEL_TANK_STEP_2
+  flags: mutable
+  default: 0
+  min: 0
+  max: 100
+
+fuel.ptc_step_3:
+  type: Integer
+  note: Defines ptc of the fuel tank for step 3.
+  enum: PARAM_FUEL_TANK_STEP_3
+  flags: mutable
+  default: 0
+  min: 0
+  max: 100
+
+fuel.ptc_step_4:
+  type: Integer
+  note: Defines ptc of the fuel tank for step 4.
+  enum: PARAM_FUEL_TANK_STEP_4
+  flags: mutable
+  default: 0
+  min: 0
+  max: 100
+
+fuel.ptc_step_5:
+  type: Integer
+  note: Defines ptc of the fuel tank for step 5.
+  enum: PARAM_FUEL_TANK_STEP_5
+  flags: mutable
+  default: 0
+  min: 0
+  max: 100
+
+fuel.ptc_step_6:
+  type: Integer
+  note: Defines ptc of the fuel tank for step 6.
+  enum: PARAM_FUEL_TANK_STEP_6
+  flags: mutable
+  default: 0
+  min: 0
+  max: 100
+
+fuel.ptc_step_7:
+  type: Integer
+  note: Defines ptc of the fuel tank for step 7.
+  enum: PARAM_FUEL_TANK_STEP_7
+  flags: mutable
+  default: 0
+  min: 0
+  max: 100
+
+fuel.ptc_step_8:
+  type: Integer
+  note: Defines ptc of the fuel tank for step 8.
+  enum: PARAM_FUEL_TANK_STEP_8
+  flags: mutable
+  default: 0
+  min: 0
+  max: 100

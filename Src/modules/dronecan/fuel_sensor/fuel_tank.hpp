@@ -11,14 +11,12 @@
 #include "params.hpp"
 #include <stdint.h>
 #include "uavcan/equipment/ice/FuelTankStatus.h"
-// #include "drivers/as5600/as5600.hpp"
 #include "peripheral/adc/circuit_periphery.hpp"
 #include "uavcan/equipment/esc/RawCommand.h"
 #include "algorithms.hpp"
 #include "common/module.hpp"
 #include "publisher.hpp"
 #include "subscriber.hpp"
-#include "common/logging.hpp"
 
 class VtolFuelTank : public Module {
 public:
@@ -52,6 +50,15 @@ private:
         uint16_t full_tank_enc_raw;
         uint8_t min_magnitude;
         uint8_t tank_id;
+        uint16_t ptc_step_1;
+        uint16_t ptc_step_2;
+        uint16_t ptc_step_3;
+        uint16_t ptc_step_4;
+        uint16_t ptc_step_5;
+        uint16_t ptc_step_6;
+        uint16_t ptc_step_7;
+        uint16_t ptc_step_8;
+        uint16_t ptc_step_9;
     };
 
     struct InternalState {
@@ -61,16 +68,16 @@ private:
         float raw_angle;
         float filtered_angle;
         float available_fuel_cm3;
-        int16_t magnitude;
+        uint8_t step;
         uint8_t available_fuel_pct;
     };
     uint32_t measurement_deadline{0};
 
     Parameters params;
     InternalState state;
-    Logging logger{"FUEL"};
 
-    static inline uint32_t arm_deadline_ms{0};   
+    static inline uint32_t arm_deadline_ms{0};
+    uint8_t check_fuel_step(uint16_t raw_pct);
 
     // DroneCAN related things
     static void raw_command_callback(const RawCommand_t& msg);
