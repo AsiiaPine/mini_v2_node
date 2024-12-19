@@ -81,6 +81,12 @@ static void blink_board_led() {
 }
 
 __attribute__((noreturn)) void application_entry_point() {
+    while (true) {
+        auto res = !HAL::Watchdog::can_init();
+        if (res) {
+            break;
+        }
+    }
     init_board_periphery();
     ModuleManager::init();
 

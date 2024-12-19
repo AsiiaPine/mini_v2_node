@@ -17,6 +17,22 @@ extern IWDG_HandleTypeDef hiwdg;
 
 namespace HAL {
 
+bool Watchdog::can_init() {
+#if defined(HAL_IWDG_MODULE_ENABLED) && defined(FDCAN1)
+     if (!__HAL_FDCAN_GET_FLAG(&hfdcan1, FDCAN_FLAG_TIMEOUT_OCCURRED)) {
+        HAL_IWDG_Refresh(&hiwdg);
+        return false;
+    }
+    // auto res = HAL_FDCAN_GetError(&hfdcan1);
+    // if (res) {
+    //     HAL_IWDG_Refresh(&hiwdg);
+    //     hfdcan1.ErrorCode = HAL_FDCAN_ERROR_NONE;
+    // }
+
+#endif  // HAL_IWDG_MODULE_ENABLED
+    return true;
+}
+
 void Watchdog::refresh() {
 #ifdef HAL_IWDG_MODULE_ENABLED
     if (reboot_required) {
@@ -25,6 +41,11 @@ void Watchdog::refresh() {
 #endif  // HAL_IWDG_MODULE_ENABLED
 
 #if defined(HAL_IWDG_MODULE_ENABLED) && defined(FDCAN1)
+    // auto res = HAL_FDCAN_GetError(&hfdcan1);
+    // if (res) {
+    //     HAL_IWDG_Refresh(&hiwdg);
+    //     return;
+    // }
     if (!__HAL_FDCAN_GET_FLAG(&hfdcan1, FDCAN_FLAG_BUS_OFF)) {
         HAL_IWDG_Refresh(&hiwdg);
     }

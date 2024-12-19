@@ -15,7 +15,12 @@ public:
      * @brief Reload IWDG counter with value defined in the reload register
      */
     static void refresh();
-
+     /**
+      * @brief Check if there is an error on FDCAN1 and refresh IWDG if needed
+      * @note This function is called before HAL_IWDG_Init()
+      *       to prevent the reboot on the first call
+      */
+    static bool can_init();
     /**
      * @brief Block all refresh calls, so the application will be rebooted soon
      */
