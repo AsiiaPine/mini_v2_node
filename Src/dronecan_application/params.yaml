@@ -14,65 +14,29 @@ system.name:
   flags: mutable
   default: "co.raccoonlab.mini"
 
-force.scaler_1:
+led_pull_down.ttl_cmd:
   type: Integer
-  note: Scaler for the first force sensor value in pct [%].
-  enum: PARAM_FORCE_SCALER_1
+  note: Defines the time to live for the command in milliseconds.
+  enum: PARAM_LED_PULL_DOWN_TTL_CMD
   flags: mutable
-  default: 1
-  min: 1
+  default: 1000
+  min: 0
   max: 10000
 
-force.scaler_2:
+led_pull_down.pwm_cmd_type:
   type: Integer
-  note: Scaler for the second force sensor value in pct [%].
-  enum: PARAM_FORCE_SCALER_2
-  flags: mutable
-  default: 1
-  min: 1
-  max: 10000
-
-force.offset_1:
-  type: Integer
-  note: Offset for the second force sensor value.
-  enum: PARAM_FORCE_OFFSET_1
-  flags: mutable
-  default: 0
-  min: -1000
-  max: 10000
-
-force.offset_2:
-  type: Integer
-  note: Offset for the second force sensor value.
-  enum: PARAM_FORCE_OFFSET_2
-  flags: mutable
-  default: 0
-  min: -1000
-  max: 10000
-
-force.send_raw:
-  type: Integer
-  note: When set to 1 sends raw sensor data in info
-  enum: PARAM_FORCE_SEND_RAW
+  note: Defines the type of the command.
+  enum: PARAM_LED_PULL_DOWN_PWM_CMD_TYPE
   flags: mutable
   default: 0
   min: 0
   max: 1
 
-force.mes_indx:
+led_pull_down.channel:
   type: Integer
-  note: When set to 0, the ADC IN4 sensor is used as measurement, if 1 - right.
-  enum: PARAM_FORCE_MES_INDX
+  note: Index of setpoint channel. [-1; 255]. -1 means disabled, # -2 means GPIO SET.
+  enum: PARAM_LED_PULL_DOWN_CHANNEL
   flags: mutable
-  default: 0
-  min: 0
-  max: 1
-
-force.coefficient:
-  type: Integer
-  note: Coefficient k, used to calculate force F=k*x in pct [%], so value 10 means k=0.1.
-  enum: PARAM_FORCE_COEFFICIENT
-  flags: mutable
-  default: 1
-  min: 0
-  max: 10000
+  default: -1
+  min: -1
+  max: 255

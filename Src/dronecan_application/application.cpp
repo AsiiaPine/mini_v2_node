@@ -10,14 +10,14 @@
 #include "params.hpp"
 #include "periphery/led/led.hpp"
 #include "periphery/iwdg/iwdg.hpp"
-#include "modules/ForceModule.hpp"
+#include "modules/LedPullDown.hpp"
+
+Logger log = Logger("main");
 
 
 void application_entry_point() {
-    paramsInit((ParamIndex_t)IntParamsIndexes::INTEGER_PARAMS_AMOUNT, NUM_OF_STR_PARAMS, -1, 1);
-    paramsInitRedundantPage(255);
-    paramsChooseRom();
-    paramsLoad();
+    paramsInit(static_cast<uint8_t>(IntParamsIndexes::INTEGER_PARAMS_AMOUNT), NUM_OF_STR_PARAMS, -1, 1);
+    paramsLoadFromFlash();
 
     auto node_id = paramsGetIntegerValue(IntParamsIndexes::PARAM_UAVCAN_NODE_ID);
 
@@ -25,26 +25,48 @@ void application_entry_point() {
     auto node_name_param_idx = static_cast<ParamIndex_t>(IntParamsIndexes::INTEGER_PARAMS_AMOUNT);
     paramsSetStringValue(node_name_param_idx, 19, (const uint8_t*)node_name);
     uavcanSetNodeName(node_name);
-
     LedPeriphery::reset();
 
-    uavcanInitApplication(node_id);
-
-    ForceModule& force_module = ForceModule::get_instance();
+    // ForceModule& force_module = ForceModule::get_instance();
+    LedPullModule& led_pull_module = LedPullModule::get_instance();
     LedColor color = LedColor::BLUE_COLOR;
+    static uint32_t first_blink = 0;
+    static uint32_t last_blink = 0;
+    bool state = false;
 
-    if (!force_module.instance_initialized) {
-        color = LedColor::RED_COLOR;
-    }
-    while(true) {
-        LedPeriphery::toggle(color);
-        force_module.spin_once();
-        if (force_module.status != ModuleStatus::MODULE_OK) {
-            color = LedColor::RED_COLOR;
-        } else {
-            color = LedColor::BLUE_COLOR;
+    uavcanInitApplication(node_id);
+    log.init("main");
+    static uint32_t start_time = HAL_GetTick();
+    while(HAL_GetTick() - start_time < 4000) {
+        uavcanSpinOnce();
+        WatchdogPeriphery::refresh();
+        if (HAL_GetTick() - last_blink < 1000) {
+            continue;
         }
-        uavcanSetNodeHealth((NodeStatusHealth_t)force_module.status);
+        last_blink = HAL_GetTick();
+        if (state) {
+            LedPeriphery::reset();
+            led_pull_module.led_off();
+            state = false;
+            log.log_info("off");
+        } else {
+            led_pull_module.led_on();
+            LedPeriphery::set(color);
+            state = true;
+            log.log_info("on");
+        }
+    }
+    led_pull_module.led_off();
+
+    while(true) {
+        led_pull_module.spin_once();
+        if (led_pull_module.command_on) {
+            color = LedColor::BLUE_COLOR;
+        } else {
+            color = LedColor::COLORS_AMOUNT;
+        }
+
+        uavcanSetNodeHealth((NodeStatusHealth_t)led_pull_module.status);
         uavcanSpinOnce();
 
         WatchdogPeriphery::refresh();
