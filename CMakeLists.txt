@@ -15,6 +15,15 @@ option(USE_PLATFORM_UBUNTU "Build for SITL (Software In The Loop)" OFF)
 option(USE_PLATFORM_NODE_V2 "Build for stm32f103xB (128 KBytes)" OFF)
 option(USE_PLATFORM_NODE_V3 "Build for stm32g0b1 (512 KBytes)" OFF)
 
+function(check_file_unique error_message_prefix file_list)
+    list(LENGTH ${file_list} file_count)
+    if(file_count EQUAL 0)
+        message(FATAL_ERROR "${error_message_prefix} found")
+    elseif(file_count GREATER 1)
+        message(FATAL_ERROR "More than one ${error_message_prefix} found")
+    endif()
+endfunction()
+
 if(USE_PLATFORM_UBUNTU)
     set(LIBPARAMS_PLATFORM ubuntu)
     set(CAN_PLATFORM socketcan)
@@ -35,6 +44,9 @@ elseif(USE_PLATFORM_NODE_V2)
                                 ${stm32cubeMxProjectPath}/Core/Startup/*.s
     )
 
+    check_file_unique("startup file" startupFile)
+    check_file_unique("linker file" ldFile)
+
     set(CMAKE_EXE_LINKER_FLAGS "-T${ldFile} -Wl,-Map=${PROJECT_NAME}.map,--cref")
     include(${CMAKE_DIR}/toolchain-stm32f103xB.cmake)
 elseif(USE_PLATFORM_NODE_V3)
@@ -50,6 +62,9 @@ elseif(USE_PLATFORM_NODE_V3)
     FILE(GLOB startupFile       ${stm32cubeMxProjectPath}/*.s
                                 ${stm32cubeMxProjectPath}/Core/Startup/*.s
     )
+
+    check_file_unique("startup file" startupFile)
+    check_file_unique("linker file" ldFile)
 
     set(CMAKE_EXE_LINKER_FLAGS "-T${ldFile} -Wl,-Map=${PROJECT_NAME}.map,--cref")
     include(${CMAKE_DIR}/toolchain-stm32g0b1.cmake)
