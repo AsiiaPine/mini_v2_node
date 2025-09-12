@@ -9,6 +9,7 @@ CommandType LedPullModule::pwm_cmd_type = CommandType::RAW_COMMAND;
 uint32_t LedPullModule::next_turn_off_ms = 0;
 uint32_t LedPullModule::ttl_cmd = 1000;
 static uint32_t last_message_ms = 0;
+static uint32_t start_time = 0;
 
 LedPullModule& LedPullModule::get_instance() {
     if (!instance_initialized) {
@@ -26,13 +27,33 @@ int8_t LedPullModule::init() {
     update_params();
     logger.log_info("init");
     command_on = false;
-
-    uavcanSubscribe(UAVCAN_EQUIPMENT_ESC_RAWCOMMAND,            raw_command_callback);
-    uavcanSubscribe(UAVCAN_EQUIPMENT_ACTUATOR_ARRAY_COMMAND,    array_command_callback);
+    start_time = HAL_GetTick();
+    // uavcanSubscribe(UAVCAN_EQUIPMENT_ESC_RAWCOMMAND,            raw_command_callback);
+    // uavcanSubscribe(UAVCAN_EQUIPMENT_ACTUATOR_ARRAY_COMMAND,    array_command_callback);
     return 0;
 }
 
 void LedPullModule::spin_once() {
+    static uint32_t last_blink = 0;
+    if (HAL_GetTick() - start_time < 4000) {
+        if (HAL_GetTick() - last_blink < 1000) {
+            return;
+        }
+        last_blink = HAL_GetTick();
+        if (command_on) {
+            led_off();
+            command_on = false;
+        } else {
+            led_on();
+            command_on = true;
+        }
+        return;
+    }
+    if (!is_subscribed) {
+        uavcanSubscribe(UAVCAN_EQUIPMENT_ESC_RAWCOMMAND,            raw_command_callback);
+        uavcanSubscribe(UAVCAN_EQUIPMENT_ACTUATOR_ARRAY_COMMAND,    array_command_callback);
+        is_subscribed = true;
+    }
     if (instance_initialized) {
         status = NodeStatusHealth_t::NODE_STATUS_HEALTH_OK;
     }
@@ -80,17 +101,9 @@ void LedPullModule::raw_command_callback(CanardRxTransfer* transfer) {
     if (cmd > 4000) {
         command_on = true;
         next_turn_off_ms = HAL_GetTick() + ttl_cmd;
-        if (HAL_GetTick() > last_message_ms + ttl_cmd) {
-            logger.log_info("on");
-            last_message_ms = HAL_GetTick();
-        }
         led_on();
     } else {
         command_on = false;
-        if (HAL_GetTick() > last_message_ms + ttl_cmd) {
-            logger.log_info("off");
-            last_message_ms = HAL_GetTick();
-        }
         led_off();
     }
 }
@@ -115,18 +128,10 @@ void LedPullModule::array_command_callback(CanardRxTransfer* transfer) {
         if (command.commads[j].command_value > 0.5) {
             command_on = true;
             led_on();
-            if (HAL_GetTick() > last_message_ms + ttl_cmd) {
-                logger.log_info("on");
-                last_message_ms = HAL_GetTick();
-            }
             next_turn_off_ms = HAL_GetTick() + ttl_cmd;
             break;
         }
         led_off();
-        if (HAL_GetTick() > last_message_ms + ttl_cmd) {
-            logger.log_info("off");
-            last_message_ms = HAL_GetTick();
-        }
         command_on = false;
         break;
     }

@@ -35,7 +35,7 @@ class LedPullModule {
     static LedPullModule instance;
 
     static Logger logger;
-
+    bool is_subscribed = false;
     LedPullModule(){}
 
     int8_t init();

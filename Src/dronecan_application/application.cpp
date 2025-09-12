@@ -37,25 +37,6 @@ void application_entry_point() {
     uavcanInitApplication(node_id);
     log.init("main");
     static uint32_t start_time = HAL_GetTick();
-    while(HAL_GetTick() - start_time < 4000) {
-        uavcanSpinOnce();
-        WatchdogPeriphery::refresh();
-        if (HAL_GetTick() - last_blink < 1000) {
-            continue;
-        }
-        last_blink = HAL_GetTick();
-        if (state) {
-            LedPeriphery::reset();
-            led_pull_module.led_off();
-            state = false;
-            log.log_info("off");
-        } else {
-            led_pull_module.led_on();
-            LedPeriphery::set(color);
-            state = true;
-            log.log_info("on");
-        }
-    }
     led_pull_module.led_off();
 
     while(true) {
