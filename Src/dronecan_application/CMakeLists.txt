@@ -18,7 +18,6 @@ set(applicationSourceCode
     ${DRONECAN_SOURCES}
     ${ROOT_DIR}/Src/dronecan_application/application.cpp
     ${ROOT_DIR}/Src/dronecan_application/modules/CircuitStatusModule.cpp
-    # ${ROOT_DIR}/Src/dronecan_application/modules/ForceModule.cpp
     ${ROOT_DIR}/Src/dronecan_application/modules/LedPullDown.cpp
     ${ROOT_DIR}/Src/dronecan_application/logger.cpp
 )
