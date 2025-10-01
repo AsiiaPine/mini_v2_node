@@ -11,7 +11,6 @@
 #include "uavcan/equipment/esc/RawCommand.h"
 #include "periphery/adc/circuit_periphery.hpp"
 #include "uavcan/equipment/power/CircuitStatus.h"
-#include "logger.hpp"
 #include "params.hpp"
 #include "main.h"
 
@@ -34,7 +33,6 @@ class LedPullModule {
  private:
     static LedPullModule instance;
 
-    static Logger logger;
     bool is_subscribed = false;
     LedPullModule(){}
 

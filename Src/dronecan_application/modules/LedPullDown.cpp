@@ -2,19 +2,17 @@
 
 LedPullModule LedPullModule::instance = LedPullModule();
 bool LedPullModule::instance_initialized = false;
-Logger LedPullModule::logger = Logger("LedPullModule");
 bool LedPullModule::command_on = false;
 int LedPullModule::channel = -1;
 CommandType LedPullModule::pwm_cmd_type = CommandType::RAW_COMMAND;
 uint32_t LedPullModule::next_turn_off_ms = 0;
 uint32_t LedPullModule::ttl_cmd = 1000;
-static uint32_t last_message_ms = 0;
 static uint32_t start_time = 0;
+
 
 LedPullModule& LedPullModule::get_instance() {
     if (!instance_initialized) {
         if (instance.init() != 0) {
-            logger.log_debug("LED init error");
         } else {
             instance_initialized = true;
         }
@@ -25,11 +23,8 @@ LedPullModule& LedPullModule::get_instance() {
 
 int8_t LedPullModule::init() {
     update_params();
-    logger.log_info("init");
     command_on = false;
     start_time = HAL_GetTick();
-    // uavcanSubscribe(UAVCAN_EQUIPMENT_ESC_RAWCOMMAND,            raw_command_callback);
-    // uavcanSubscribe(UAVCAN_EQUIPMENT_ACTUATOR_ARRAY_COMMAND,    array_command_callback);
     return 0;
 }
 
@@ -80,7 +75,8 @@ void LedPullModule::update_params() {
         return;
     }
     ttl_cmd = paramsGetIntegerValue(IntParamsIndexes::PARAM_LED_PULL_DOWN_TTL_CMD);
-    pwm_cmd_type = static_cast<CommandType>(paramsGetIntegerValue(IntParamsIndexes::PARAM_LED_PULL_DOWN_PWM_CMD_TYPE));
+    pwm_cmd_type = static_cast<CommandType>(
+                paramsGetIntegerValue(IntParamsIndexes::PARAM_LED_PULL_DOWN_PWM_CMD_TYPE));
     next_upd_ms = HAL_GetTick() + 1000;
     channel = paramsGetIntegerValue(IntParamsIndexes::PARAM_LED_PULL_DOWN_CHANNEL);
 }

@@ -4,17 +4,14 @@
 ***/ 
 
 #include "CircuitStatusModule.hpp"
-
+#include "main.h"
 
 CircuitStatusModule CircuitStatusModule::instance = CircuitStatusModule();
 bool CircuitStatusModule::instance_initialized = false;
-Logger CircuitStatusModule::logger = Logger("CircuitStatus");
 
 CircuitStatusModule& CircuitStatusModule::get_instance() {
     if (!instance_initialized) {
-        if (instance.init() != 0) {
-            logger.log_debug("ADC init error");
-        } else {
+        if (instance.init() == 0) {
             instance_initialized = true;
         }
     }

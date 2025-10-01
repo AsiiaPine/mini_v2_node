@@ -7,10 +7,9 @@
 #define SRC_MODULES_CIRCUIT_STATUS_HPP_
 
 #include "periphery/led/led.hpp"
-#include "uavcan/equipment/temperature/Temperature.h"
+#include "uavcan/equipment/device/Temperature.h"
 #include "periphery/adc/circuit_periphery.hpp"
 #include "uavcan/equipment/power/CircuitStatus.h"
-#include "logger.hpp"
 
 
 class CircuitStatusModule {
@@ -24,8 +23,6 @@ private:
 
     CircuitStatus_t circuit_status = {};
     Temperature_t temperature_status = {};
-
-    static Logger logger;
 
     CircuitStatusModule(){}
 

@@ -12,8 +12,9 @@
 #include "periphery/iwdg/iwdg.hpp"
 #include "modules/LedPullDown.hpp"
 
-Logger log = Logger("main");
-
+uint32_t platformSpecificGetTimeMs() {
+    return HAL_GetTick();
+}
 
 void application_entry_point() {
     paramsInit(static_cast<uint8_t>(IntParamsIndexes::INTEGER_PARAMS_AMOUNT), NUM_OF_STR_PARAMS, -1, 1);
@@ -30,13 +31,7 @@ void application_entry_point() {
     // ForceModule& force_module = ForceModule::get_instance();
     LedPullModule& led_pull_module = LedPullModule::get_instance();
     LedColor color = LedColor::BLUE_COLOR;
-    static uint32_t first_blink = 0;
-    static uint32_t last_blink = 0;
-    bool state = false;
-
     uavcanInitApplication(node_id);
-    log.init("main");
-    static uint32_t start_time = HAL_GetTick();
     led_pull_module.led_off();
 
     while(true) {
@@ -46,7 +41,7 @@ void application_entry_point() {
         } else {
             color = LedColor::COLORS_AMOUNT;
         }
-
+        LedPeriphery::toggle(color);
         uavcanSetNodeHealth((NodeStatusHealth_t)led_pull_module.status);
         uavcanSpinOnce();
 
