@@ -32,11 +32,20 @@ led_pull_down.pwm_cmd_type:
   min: 0
   max: 1
 
-led_pull_down.channel:
+led_pull_down.switch_channel:
   type: Integer
-  note: Index of setpoint channel. [-1; 255]. -1 means disabled, # -2 means GPIO SET.
-  enum: PARAM_LED_PULL_DOWN_CHANNEL
+  note: Index of switch channel. [-1; 255]. -1 means disabled.
+  enum: PARAM_LED_PULL_DOWN_SWITCH_CHANNEL
   flags: mutable
   default: -1
-  min: -1
+  min: -2
+  max: 255
+
+led_pull_down.position_channel:
+  type: Integer
+  note: Index of position channel[-1; 255]. If switch channel is disabled, the position channel is ignored. -1 means disabled.
+  enum: PARAM_LED_PULL_DOWN_POSITION_CHANNEL
+  flags: mutable
+  default: -1
+  min: -2
   max: 255

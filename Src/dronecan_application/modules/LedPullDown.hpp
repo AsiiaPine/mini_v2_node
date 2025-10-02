@@ -19,6 +19,17 @@ enum class CommandType: uint8_t {
     ARRAY_COMMAND = 1,
 };
 
+enum class LedConfiguration: uint8_t {
+    LEFT = 0,
+    RIGHT = 1,
+    BOTH = 2,
+};
+
+enum class LedState: bool {
+    OFF = 0,
+    ON = 1,
+};
+
 class LedPullModule {
  public:
     static LedPullModule &get_instance();
@@ -45,10 +56,16 @@ class LedPullModule {
     static void raw_command_callback(CanardRxTransfer* transfer);
     static void array_command_callback(CanardRxTransfer* transfer);
     static void hardpoint_callback(CanardRxTransfer* transfer);
+    static void parse_position_raw_command(CanardRxTransfer* transfer);
+
     static uint32_t ttl_cmd;
     static CommandType pwm_cmd_type;
     static uint32_t next_turn_off_ms;
-    static int channel;
+    static int position_channel;
+    static int switch_channel;
+
+    static LedConfiguration led_configuration;
+    static LedState led_state;
 };
 
 #endif  // SRC_MODULES_LED_PULL_DOWN_HPP_
