@@ -1,4 +1,5 @@
 #include "LedPullDown.hpp"
+#include "logger.hpp"
 
 LedPullModule LedPullModule::instance = LedPullModule();
 bool LedPullModule::instance_initialized = false;
@@ -11,6 +12,8 @@ LedConfiguration LedPullModule::led_configuration = LedConfiguration::BOTH;
 LedState LedPullModule::led_state = LedState::OFF;
 int LedPullModule::position_channel = -1;
 int LedPullModule::switch_channel = -1;
+
+DronecanLogger logger = DronecanLogger("led_pull");
 
 LedPullModule& LedPullModule::get_instance() {
     if (!instance_initialized) {
@@ -59,7 +62,7 @@ void LedPullModule::spin_once() {
     }
     update_params();
 }
-
+// 3.3 -- on
 void LedPullModule::led_on() {
     switch (led_configuration) {
         case LedConfiguration::LEFT:
@@ -174,10 +177,10 @@ void LedPullModule::array_command_callback(CanardRxTransfer* transfer) {
                 continue;
             }
             if (command.commads[j].command_value > 0.66) {
-                led_configuration = LedConfiguration::LEFT;
+                led_configuration = LedConfiguration::RIGHT;
                 continue;
             }
-            led_configuration = LedConfiguration::RIGHT;
+            led_configuration = LedConfiguration::LEFT;
             continue;
         }
     }
